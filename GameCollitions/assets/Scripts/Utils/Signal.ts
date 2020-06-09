@@ -16,6 +16,7 @@ export abstract class BaseSignal extends SingleTon<BaseSignal>() {
     }
 
     private excuteListener(...args) {
+
         if (this.listenerMap && this.listenerMap.length > 0) {
             for (let listener of this.listenerMap) {
                 listener.callback.apply(listener.target, args);

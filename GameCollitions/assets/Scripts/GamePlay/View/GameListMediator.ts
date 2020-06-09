@@ -13,6 +13,7 @@ export class GameListMediator extends BaseMediator<GameListView> {
     }
 
     onGameStart() {
+        this.View.reFreshItems();
         this.View.Show();
     }
 }

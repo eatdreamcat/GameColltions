@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "0d843533-cf52-4b30-9c79-ec7daec64b8d",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "21-Cash": {
+      "ver": "1.0.3",
+      "uuid": "00d9a997-4144-4e35-8427-376d25ceb324",
+      "rawTextureUuid": "0d843533-cf52-4b30-9c79-ec7daec64b8d",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 188,
+      "height": 185,
+      "rawWidth": 188,
+      "rawHeight": 185,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

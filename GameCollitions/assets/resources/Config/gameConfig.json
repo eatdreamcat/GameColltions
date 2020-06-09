@@ -1,6 +1,6 @@
 {
     "gamePath": "games/",
-    "normalPath": "games/normal/",
-    "specialPath": "games/special",
+    "normalPath": "res/games/normal/",
+    "specialPath": "res/games/special/",
     "games": ["SolitaireWin", "21-Cash", "SpiderRush", "DaubCash", "BubbleGold", "Bust-A-Move", "FruitPunch", "FishJump"]
 }

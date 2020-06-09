@@ -9,6 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import BaseView from "../../View/BaseView";
+import { GamePageMediator } from "./GamePageMediator";
 
 
 
@@ -17,7 +18,25 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class GamePageView extends BaseView {
 
+
+    get BlockEvent() {
+        return this.getComponent(cc.BlockInputEvents)
+    }
+
     onLoad() {
         super.onLoad();
+        this.BindMedaitor(GamePageMediator)
+        this.BlockEvent.enabled = false;
+
+    }
+
+    Show() {
+        super.Show();
+        this.BlockEvent.enabled = true;
+    }
+
+    Hide() {
+        super.Hide();
+        this.BlockEvent.enabled = false;
     }
 }
