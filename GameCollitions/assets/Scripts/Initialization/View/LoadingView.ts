@@ -8,20 +8,17 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-
-import { GameListMediator } from "./GameListMediator";
 import BaseView from "../../View/BaseView";
+import LoadingMediator from "./LoadingMediator";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class GameListView extends BaseView {
+export default class LoadingView extends BaseView {
 
 
     onLoad() {
-        super.onLoad();
-        this.BindMedaitor(GameListMediator);
+        this.node.scale = 1;
+        this.BindMedaitor(LoadingMediator);
     }
-
-
 }

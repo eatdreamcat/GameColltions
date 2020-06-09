@@ -10,7 +10,7 @@ interface ConfigJson {
 export class GameConfig extends SingleTon<GameConfig>() {
 
 
-    public static readonly Path = "Config/config.json"
+    public static readonly Path = "Config/gameConfig"
     private config: ConfigJson;
     public loadConfig(callback: Function) {
         cc.loader.loadRes(GameConfig.Path, cc.JsonAsset, (err, res: cc.JsonAsset) => {
