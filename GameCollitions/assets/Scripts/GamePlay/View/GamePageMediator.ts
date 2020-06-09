@@ -9,7 +9,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
 
     get WebView() {
-        return this.node.getChildByName("GameView").getComponent(cc.WebView);
+        return this.node.getChildByName("GameView");
     }
 
     get CloseButton() {
@@ -18,9 +18,9 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
     onRegister() {
 
-        this.WebView.node.on("error", this.onGameLoadFail, this);
-        this.WebView.node.on("loaded", this.onGameLoadSuccess, this);
-        this.WebView.node.on("loading", this.onGameLoadProgress, this);
+        this.WebView.on("error", this.onGameLoadFail, this);
+        this.WebView.on("loaded", this.onGameLoadSuccess, this);
+        this.WebView.on("loading", this.onGameLoadProgress, this);
 
         this.CloseButton.on(cc.Node.EventType.TOUCH_END, this.Close, this);
 
@@ -29,7 +29,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
 
     Close() {
-        this.WebView.node.active = false;
+        this.WebView.active = false;
+        this.WebView.removeComponent(cc.WebView);
         this.View.Hide();
     }
 
@@ -37,10 +38,11 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         console.log(" load game:", name, ", special:", special);
 
         let gameUrl = special ? GameConfig.inst.Config.specialPath : GameConfig.inst.Config.normalPath;
-        this.WebView.node.active = true;
+        this.WebView.active = true;
 
-        this.WebView.url = GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
-        console.log(this.WebView.url);
+        let webView = this.WebView.addComponent(cc.WebView)
+        webView.url = GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
+        console.log(webView.url);
         this.View.Show();
 
 
