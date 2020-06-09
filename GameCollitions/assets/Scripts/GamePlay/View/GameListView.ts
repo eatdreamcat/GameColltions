@@ -52,7 +52,7 @@ export default class GameListView extends BaseView {
         function refreshIcon(node: cc.Node, index: number) {
             index = index % GameConfig.inst.Config.games.length;
             let loadFunc = GameConfig.Url == "" ? cc.loader.loadRes.bind(cc.loader) : cc.loader.load.bind(cc.loader);
-            loadFunc(GameConfig.Url + "Icons/" + GameConfig.inst.Config.games[index], (err, sp) => {
+            loadFunc(GameConfig.Url + "Icons/" + GameConfig.inst.Config.games[index] + ".jpg", (err, sp) => {
                 if (err) {
                     console.error(err);
                 } else {

@@ -39,7 +39,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         let gameUrl = special ? GameConfig.inst.Config.specialPath : GameConfig.inst.Config.normalPath;
         this.WebView.node.active = true;
 
-        this.WebView.url = window.location.href + gameUrl + name;
+        this.WebView.url = GameConfig.inst.Config.Url + gameUrl + name;
         console.log(this.WebView.url);
         this.View.Show();
 

@@ -5,24 +5,26 @@ interface ConfigJson {
     gamePath: string;
     normalPath: string;
     specialPath: string;
+    Url: string;
     games: string[]
 }
 export class GameConfig extends SingleTon<GameConfig>() {
 
 
-    public static readonly Path = "Config/gameConfig";
+    public static readonly Path = "Config/gameConfig.json";
 
     public static get Url() {
-        return CC_DEBUG ? "" : "https://vicat.wang/GameColltions/"
+        return CC_DEBUG ? "https://vicat.wang/GameRes/" : "https://vicat.wang/GameRes/"
     }
 
     private config: ConfigJson;
     public loadConfig(callback: Function) {
-        cc.loader.loadRes(GameConfig.Path, cc.JsonAsset, (err, res: cc.JsonAsset) => {
+        cc.loader.load(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err, res: ConfigJson) => {
             if (err) {
                 console.error(err);
             } else {
-                this.config = res.json;
+                console.log(res)
+                this.config = res;
                 callback();
             }
         });
