@@ -4,6 +4,7 @@ import { GameConfig } from "../../Global/GameConfig";
 export class LoadConfigCommond extends puremvc.SimpleCommand {
     public static STEP: string = "LoadConfig";
     execute(notification: puremvc.INotification) {
+        console.log(" start load config...")
         if (notification) {
             let body = notification.getBody<InitialFacade>();
             if (body && body.step) {

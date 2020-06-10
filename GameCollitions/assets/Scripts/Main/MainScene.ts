@@ -8,6 +8,7 @@ export default class MainScene extends cc.Component {
 
 
   onLoad() {
+    console.log(" onLoad ")
     InitialFacade.inst.start();
   }
 
