@@ -16,6 +16,12 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         return this.node.getChildByName("Close");
     }
 
+    get RefreshButton() {
+        return this.node.getChildByName("Refresh")
+    }
+
+    private webViewNode: cc.Node;
+
     onRegister() {
 
         this.WebView.on("error", this.onGameLoadFail, this);
@@ -23,15 +29,28 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         this.WebView.on("loading", this.onGameLoadProgress, this);
 
         this.CloseButton.on(cc.Node.EventType.TOUCH_END, this.Close, this);
+        this.RefreshButton.on(cc.Node.EventType.TOUCH_END, this.Refresh, this);
 
         LoadGameSignal.inst.addListenerTwo(this.startLoadGame, this);
     }
 
 
+    Refresh() {
+        if (this.webViewNode == null || cc.isValid(this.webViewNode, true) == false) return;
+        let webView = this.webViewNode.getComponent(cc.WebView);
+        if (webView) {
+            webView.url = webView.url + Date.now();
+        }
+    }
+
     Close() {
         this.WebView.active = false;
-        this.WebView.removeComponent(cc.WebView);
+        this.webViewNode.removeComponent(cc.WebView);
+        this.webViewNode.destroy();
+        this.webViewNode = null;
         this.View.Hide();
+        this.CloseButton.active = false;
+        this.RefreshButton.active = false;
     }
 
     startLoadGame(name: string, special: boolean) {
@@ -40,11 +59,20 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         let gameUrl = special ? GameConfig.inst.Config.specialPath : GameConfig.inst.Config.normalPath;
         this.WebView.active = true;
 
-        let webView = this.WebView.addComponent(cc.WebView)
+        if (this.webViewNode != null && this.webViewNode.destroy) {
+            this.webViewNode.destroy();
+        }
+        this.webViewNode = new cc.Node();
+        this.webViewNode.width = this.WebView.width;
+        this.webViewNode.height = this.WebView.height;
+        this.WebView.addChild(this.webViewNode);
+
+        let webView = this.webViewNode.addComponent(cc.WebView)
         webView.url = GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
         console.log(webView.url);
         this.View.Show();
-
+        this.CloseButton.active = true;
+        this.RefreshButton.active = true;
 
     }
 

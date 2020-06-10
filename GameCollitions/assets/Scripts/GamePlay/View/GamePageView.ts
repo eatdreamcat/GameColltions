@@ -23,7 +23,10 @@ export default class GamePageView extends BaseView {
         return this.getComponent(cc.BlockInputEvents)
     }
 
+
+
     onLoad() {
+        console.log(" Game PageView Onload ")
         super.onLoad();
         this.BindMedaitor(GamePageMediator)
         this.BlockEvent.enabled = false;

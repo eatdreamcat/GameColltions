@@ -24,9 +24,13 @@ export default class GameListView extends BaseView {
         super.onLoad();
 
         this.Toggle.node.on("toggle", () => {
-            console.log("toggle")
+            setTimeout(() => {
+                this.reFreshItems();
+            }, 0);
         }, this);
         this.BindMedaitor(GameListMediator);
+
+        this.Icon.active = false;
     }
 
     get ScrollView() {
@@ -41,34 +45,50 @@ export default class GameListView extends BaseView {
         return this.node.getChildByName("Toggle").getComponent(cc.Toggle);
     }
 
+    get Icon() {
+        return this.node.getChildByName("Icon")
+    }
+
+    getIconSprite(node: cc.Node) {
+        return node.getChildByName("Mask").getChildByName("icon512").getComponent(cc.Sprite)
+    }
+
 
     reFreshItems() {
-        let itemCount = GameConfig.inst.Config.games.length;
-        if (this.Content.childrenCount >= itemCount) return;
+        let games = this.Toggle.isChecked ? GameConfig.inst.Config.specialGames : GameConfig.inst.Config.normalGames;
+
+        let itemCount = games.length;
+
+        this.Content.removeAllChildren();
+
+
 
         console.log(" reFreshItems ");
         let self = this;
-        let template = this.Content.children[0];
+
         function refreshIcon(node: cc.Node, index: number) {
-            index = index % GameConfig.inst.Config.games.length;
+            index = index % games.length;
             let loadFunc = GameConfig.Url == "" ? cc.loader.loadRes.bind(cc.loader) : cc.loader.load.bind(cc.loader);
-            loadFunc(GameConfig.Url + "Icons/" + GameConfig.inst.Config.games[index] + ".jpg", (err, sp) => {
+            loadFunc(GameConfig.Url + "Icons/" + games[index] + ".jpg?time=" + Date.now(), (err, sp) => {
                 if (err) {
                     console.error(err);
                 } else {
-                    node.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(sp);
-                    node.name = GameConfig.inst.Config.games[index];
+                    self.getIconSprite(node).spriteFrame = new cc.SpriteFrame(sp);
+                    node.name = games[index];
                     node.targetOff(self);
                     node.on(cc.Node.EventType.TOUCH_END, () => {
                         LoadGameSignal.inst.dispatchTwo(node.name, self.Toggle.isChecked);
 
                     }, self);
+                    node.runAction(cc.scaleTo(0.1, 1))
                 }
             })
         }
-        refreshIcon(template, this.Content.childrenCount - 1)
+
         while (this.Content.childrenCount < itemCount) {
-            let item = cc.instantiate(template);
+            let item = cc.instantiate(this.Icon);
+            item.active = true;
+            item.scale = 0;
             this.Content.addChild(item);
             refreshIcon(item, this.Content.childrenCount - 1);
         }

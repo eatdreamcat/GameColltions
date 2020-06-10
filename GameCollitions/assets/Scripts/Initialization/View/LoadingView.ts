@@ -28,7 +28,7 @@ export default class LoadingView extends BaseView {
         return this.node.getChildByName("Progress").getComponent(cc.ProgressBar)
     }
     onLoad() {
-
+        console.log(" Loading View onLoad ")
         this.node.scale = 1;
         this.BindMedaitor(LoadingMediator);
     }
