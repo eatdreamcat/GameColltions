@@ -16,21 +16,89 @@ import { LoadGameSignal } from "../Command/LoadGameSignal";
 
 const { ccclass, property } = cc._decorator;
 
+
+enum Type {
+    Normal,
+    Special
+}
 @ccclass
 export default class GameListView extends BaseView {
 
 
+
+
+    private type: Type = Type.Special;
+
+    private readonly SELECTED_COLOR = cc.color(12, 130, 254)
     onLoad() {
         super.onLoad();
 
-        this.Toggle.node.on("toggle", () => {
-            setTimeout(() => {
-                this.reFreshItems();
-            }, 0);
+        this.type = Type.Special;
+
+        // 默认选中特殊
+
+        this.updateType();
+
+
+        this.SpecialNode.on(cc.Node.EventType.TOUCH_START, () => {
+
+            this.Special.color = this.SELECTED_COLOR;
+
         }, this);
-        this.BindMedaitor(GameListMediator);
+
+        this.SpecialNode.on(cc.Node.EventType.TOUCH_CANCEL, () => {
+
+            this.updateType();
+
+        }, this);
+
+        this.SpecialNode.on(cc.Node.EventType.TOUCH_END, () => {
+            this.type = Type.Special;
+            this.updateType();
+            this.reFreshItems();
+        }, this);
+
+
+        this.NormalNode.on(cc.Node.EventType.TOUCH_START, () => {
+
+            this.Normal.color = this.SELECTED_COLOR;
+        }, this);
+
+        this.NormalNode.on(cc.Node.EventType.TOUCH_END, () => {
+
+            this.type = Type.Normal;
+            this.updateType();
+            this.reFreshItems();
+        }, this);
+
+        this.NormalNode.on(cc.Node.EventType.TOUCH_CANCEL, () => {
+
+            this.updateType();
+
+        }, this);
+
+
+
+
+
+
 
         this.Icon.active = false;
+        this.Icon.getChildByName("new").scale = 0;
+
+        this.BindMedaitor(GameListMediator);
+
+
+    }
+
+    updateType() {
+        if (this.type == Type.Special) {
+            this.Special.color = this.SELECTED_COLOR;
+            this.Normal.color = cc.Color.WHITE;
+        } else {
+            this.Special.color = cc.Color.WHITE;
+            this.Normal.color = this.SELECTED_COLOR;
+        }
     }
 
     get ScrollView() {
@@ -41,9 +109,6 @@ export default class GameListView extends BaseView {
         return this.ScrollView.content;
     }
 
-    get Toggle() {
-        return this.node.getChildByName("Toggle").getComponent(cc.Toggle);
-    }
 
     get Icon() {
         return this.node.getChildByName("Icon")
@@ -54,8 +119,35 @@ export default class GameListView extends BaseView {
     }
 
 
+    get Selection() {
+        return this.node.getChildByName("TypeSelection")
+    }
+
+    get Normal() {
+        return this.Selection.getChildByName("Normal").getChildByName("Label");
+    }
+
+    get Special() {
+        return this.Selection.getChildByName("Special").getChildByName("Label")
+    }
+
+    get NormalNode() {
+        return this.Selection.getChildByName("Normal")
+    }
+
+    get SpecialNode() {
+        return this.Selection.getChildByName("Special")
+    }
+
+    get isSpecial() {
+        return this.type == Type.Special;
+    }
+
+
     reFreshItems() {
-        let games = this.Toggle.isChecked ? GameConfig.inst.Config.specialGames : GameConfig.inst.Config.normalGames;
+        let games = this.isSpecial ? GameConfig.inst.Config.specialGames : GameConfig.inst.Config.normalGames;
+
+        let newGames = GameConfig.inst.Config.new;
 
         let itemCount = games.length;
 
@@ -63,7 +155,7 @@ export default class GameListView extends BaseView {
 
 
 
-        console.log(" reFreshItems ");
+        console.log(" reFreshItems: ", Type[this.type]);
         let self = this;
 
         function refreshIcon(node: cc.Node, index: number) {
@@ -75,18 +167,27 @@ export default class GameListView extends BaseView {
                 } else {
                     self.getIconSprite(node).spriteFrame = new cc.SpriteFrame(sp);
                     node.name = games[index];
-                    node.targetOff(self);
-                    node.on(cc.Node.EventType.TOUCH_END, () => {
-                        LoadGameSignal.inst.dispatchTwo(node.name, self.Toggle.isChecked);
 
-                    }, self);
-                    node.runAction(cc.scaleTo(0.1, 1))
+                    node.targetOff(self);
+
+
+                    node.runAction(cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(() => {
+                        if (newGames.indexOf(node.name) >= 0) {
+                            node.getChildByName("new").runAction(cc.scaleTo(0.1, 1))
+                        }
+
+                        node.on(cc.Node.EventType.TOUCH_END, () => {
+                            LoadGameSignal.inst.dispatchTwo(node.name, self.isSpecial);
+
+                        }, self);
+                    })))
                 }
             })
         }
 
         while (this.Content.childrenCount < itemCount) {
             let item = cc.instantiate(this.Icon);
+            item.getChildByName("new").scale = 0;
             item.active = true;
             item.scale = 0;
             this.Content.addChild(item);

@@ -25,23 +25,33 @@ export default class LoadingView extends BaseView {
     }
 
     get Progress() {
-        return this.node.getChildByName("Progress").getComponent(cc.ProgressBar)
+        return this.node.getChildByName("Progress")
     }
+
+    get Bar() {
+        return this.Progress.getChildByName("Mask").getChildByName("bar")
+    }
+
+
     onLoad() {
         console.log(" Loading View onLoad ")
         this.node.scale = 1;
+        this.Bar.x = this.StartX;
         this.BindMedaitor(LoadingMediator);
     }
 
     private progress = 0;
+
+    private readonly StartX = -410;
+    private readonly EndX = -138;
     update(dt: number) {
 
         this.progress += dt * 0.3;
         this.progress = Math.min(this.progress, InitialFacade.inst.LoadPercent)
         this.Title.string = "Loading " + (this.progress * 100).toFixed(0) + '%';
-        this.Progress.progress = this.progress;
+        this.Bar.x = (this.EndX - this.StartX) * this.progress + this.StartX;
 
-        if (this.Progress.progress >= 1) {
+        if (this.Bar.x >= this.EndX) {
             setTimeout(() => {
                 StartUpSignal.inst.dispatch();
             }, 500);

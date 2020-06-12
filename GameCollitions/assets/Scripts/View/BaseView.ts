@@ -16,6 +16,7 @@ export default class BaseView extends cc.Component {
 
     onLoad() {
         this.node.scale = 0;
+
     }
 
     Show() {
@@ -24,6 +25,10 @@ export default class BaseView extends cc.Component {
 
     Hide() {
         this.node.runAction(cc.scaleTo(0.1, 0));
+    }
+
+    OnClick() {
+
     }
 
 
