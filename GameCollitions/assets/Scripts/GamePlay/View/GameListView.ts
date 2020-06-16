@@ -144,6 +144,7 @@ export default class GameListView extends BaseView {
     }
 
 
+    iconCache: {} = {}
     reFreshItems() {
         let games = this.isSpecial ? GameConfig.inst.Config.specialGames : GameConfig.inst.Config.normalGames;
 
@@ -160,29 +161,41 @@ export default class GameListView extends BaseView {
 
         function refreshIcon(node: cc.Node, index: number) {
             index = index % games.length;
+
+            if (self.iconCache[games[index]]) {
+                initIcon(node, self.iconCache[games[index]], index);
+                return;
+            }
+
             let loadFunc = GameConfig.Url == "" ? cc.loader.loadRes.bind(cc.loader) : cc.loader.load.bind(cc.loader);
             loadFunc(GameConfig.Url + "Icons/" + games[index] + ".jpg?time=" + Date.now(), (err, sp) => {
                 if (err) {
                     console.error(err);
                 } else {
-                    self.getIconSprite(node).spriteFrame = new cc.SpriteFrame(sp);
-                    node.name = games[index];
-
-                    node.targetOff(self);
-
-
-                    node.runAction(cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(() => {
-                        if (newGames.indexOf(node.name) >= 0) {
-                            node.getChildByName("new").runAction(cc.scaleTo(0.1, 1))
-                        }
-
-                        node.on(cc.Node.EventType.TOUCH_END, () => {
-                            LoadGameSignal.inst.dispatchTwo(node.name, self.isSpecial);
-
-                        }, self);
-                    })))
+                    self.iconCache[games[index]] = sp;
+                    initIcon(node, sp, index);
                 }
             })
+        }
+
+        function initIcon(node: cc.Node, sp: cc.Texture2D, index: number) {
+
+            self.getIconSprite(node).spriteFrame = new cc.SpriteFrame(sp);
+            node.name = games[index];
+
+            node.targetOff(self);
+
+
+            node.runAction(cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(() => {
+                if (newGames.indexOf(node.name) >= 0) {
+                    node.getChildByName("new").runAction(cc.scaleTo(0.1, 1))
+                }
+
+                node.on(cc.Node.EventType.TOUCH_END, () => {
+                    LoadGameSignal.inst.dispatchTwo(node.name, self.isSpecial);
+
+                }, self);
+            })))
         }
 
         while (this.Content.childrenCount < itemCount) {
