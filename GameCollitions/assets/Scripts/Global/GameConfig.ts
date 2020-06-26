@@ -36,12 +36,59 @@ export class GameConfig extends SingleTon<GameConfig>() {
                 }
             });
         }
-        loadFunc();
+
+        let loadFuncInNative = () =>{
+            this.loadConfigInNative(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err:any, res:string)=>{
+                if (err) {
+                    console.error(JSON.stringify(err))
+                    setTimeout(() => {
+                        loadFuncInNative();
+                    }, 100);
+                } else {
+                    console.log(res)
+                    this.config = JSON.parse(res);
+                    callback();
+                }
+            })
+        } 
+        
+
+        if (cc.sys.isNative) {
+            loadFuncInNative();
+        } else {
+            loadFunc();
+        }
     }
 
     get Config() {
         return this.config;
     }
 
+    public loadConfigInNative(url: string, callback) {
+        var xhr = cc.loader.getXMLHttpRequest(),
+        errInfo = 'Load text file failed: ' + url;
+    xhr.open('GET', url, true);
+    if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
+    xhr.onload = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200 || xhr.status === 0) {
+                callback(null, xhr.responseText);
+            }
+            else {
+                callback({status:xhr.status, errorMessage:errInfo + '(wrong status)'});
+            }
+        }
+        else {
+            callback({status:xhr.status, errorMessage:errInfo + '(wrong readyState)'});
+        }
+    };
+    xhr.onerror = function(){
+        callback({status:xhr.status, errorMessage:errInfo + '(error)'});
+    };
+    xhr.ontimeout = function(){
+        callback({status:xhr.status, errorMessage:errInfo + '(time out)'});
+    };
+    xhr.send(null);
+    }
 
 }
