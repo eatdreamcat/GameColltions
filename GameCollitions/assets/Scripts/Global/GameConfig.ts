@@ -16,20 +16,27 @@ export class GameConfig extends SingleTon<GameConfig>() {
     public static readonly Path = "Config/gameConfig.json";
 
     public static get Url() {
-        return CC_DEBUG ? "https://vicat.wang/GameRes/" : "https://vicat.wang/GameRes/"
+        return "https://vicat.wang/GameRes/"
     }
 
     private config: ConfigJson;
     public loadConfig(callback: Function) {
-        cc.loader.load(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err, res: ConfigJson) => {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log(res)
-                this.config = res;
-                callback();
-            }
-        });
+
+        let loadFunc = ()=>{
+            cc.loader.load(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err: any, res: ConfigJson) => {
+                if (err) {
+                    console.error(JSON.stringify(err));
+                    setTimeout(() => {
+                        loadFunc();
+                    }, 100);
+                } else {
+                    console.log(res)
+                    this.config = res;
+                    callback();
+                }
+            });
+        }
+        loadFunc();
     }
 
     get Config() {

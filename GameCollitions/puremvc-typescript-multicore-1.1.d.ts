@@ -1,3 +1,4 @@
+declare var CELER_X
 declare namespace puremvc {
     /**
      * The interface definition for a PureMVC notification.
