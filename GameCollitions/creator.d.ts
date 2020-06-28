@@ -24824,7 +24824,35 @@ declare namespace dragonBones {
     }
 }
 
-declare let jsb: any;
+declare namespace jsb {
+	export class AssetsManager {
+
+		public readonly static State =  {
+			UNINITED : 0,
+		}
+		constructor(manifestPath: string, storagePath: string, compareCallback:(a:string, b:string)=>int);
+		setVerifyCallback(callback: (path: string, assert: any)=>boolean)
+		setMaxConcurrentTask(count: number)
+		setEventCallback(callback: ()=>void);
+		getState(): number;
+		loadLocalManifest(url: string): void;
+		getLocalManifest(): any;
+		checkUpdate(): void;
+		getTotalBytes(): number;
+	}
+
+	export class EventAssetsManager {
+		public static ERROR_NO_LOCAL_MANIFEST: number
+		public static ERROR_DOWNLOAD_MANIFEST: number
+		public static ERROR_PARSE_MANIFEST: number
+		public static ALREADY_UP_TO_DATE: number
+		public static NEW_VERSION_FOUND: number
+	}
+
+	export class fileUtils {
+		public static getWritablePath(): string
+	}
+}
 /** Running in the editor. */
 declare let CC_EDITOR: boolean;
 /** Preview in browser or simulator. */
