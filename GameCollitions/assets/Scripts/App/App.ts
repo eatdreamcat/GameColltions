@@ -1,5 +1,6 @@
 import { CelerSDK } from "../Utils/Celer/CelerSDK";
 import { InitialFacade } from "../Initialization/Facade/InitialFacade";
+import UpdateController from "../Update/UpdateController";
 
 const { ccclass, property } = cc._decorator;
 
@@ -14,12 +15,22 @@ export default class App extends cc.Component {
 
     start() {
 
-        InitialFacade.inst.start();
+        UpdateController.inst.addCompleteCallback((msg: string) => {
+
+            console.log(" update complete:", msg);
+            InitialFacade.inst.start();
+        }, this);
+
+        UpdateController.inst.checkForUpdate();
     }
 
 
     Onclick() {
         window.alert("您已成功支付 $ 999 , 谢谢惠顾")
+    }
+
+    onDestroy() {
+        UpdateController.inst.destory();
     }
 
 }
