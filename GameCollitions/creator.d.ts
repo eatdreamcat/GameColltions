@@ -24842,10 +24842,40 @@ declare namespace jsb {
 		downloadFailedAssets(): void;
 		update(): void;
 		getTotalBytes(): number;
+		getMaxConcurrentTask(): number;
+		getDownloadedFiles(): number;
+		getTotalFiles(): number;
+		loadRemoteManifest(manifest: Manifest);
+		getLocalManifest(): Manifest;
+		getRemoteManifest(): Manifest;
+		prepareUpdate(): void;
+		isResuming(): boolean;
+
+		// getAssetId(): string;
+		// getCURLECode(): number;
+		// getMessage(): string;
+		// getCURLMCode(): number;
+		// getDownloadedBytes(): number;
+		// getPercentByFile(): number;
+		// getEventCode(): number;
+		// getPercent(): number;
+
 	}
 
 	export class Manifest {
 		constructor(manifestStr: string, storagePath: string)
+		getManifestRoot(): string;
+		setUpdating(update: boolean);
+		getManifestFileUrl(): string;
+		isVersionLoaded(): boolean;
+		parseFile(str: string);
+		isLoaded(): boolean;
+		getPackageUrl(): string;
+		isUpdating(): boolean;
+		getVersion(): string;
+		parseJSONString(str1: string, str2: string);
+		getVersionFileUrl(): string;
+		getSearchPaths(): [];
 	}
 
 	export class EventAssetsManager {
