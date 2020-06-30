@@ -251,7 +251,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 failed = true;
                 break;
             case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
-                this.onComplete('Already up to date with the latest remote version.')
+                let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
+                this.onComplete("Already up to date with the latest remote version :" + newVersionStr);
                 failed = true;
                 break;
             case jsb.EventAssetsManager.UPDATE_FINISHED:
