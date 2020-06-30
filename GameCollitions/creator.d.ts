@@ -24829,6 +24829,19 @@ declare namespace jsb {
 
 		public readonly static State = {
 			UNINITED: 0,
+			UNCHECKED: 1,
+			PREDOWNLOAD_VERSION: 2,
+			DOWNLOADING_VERSION: 3,
+			VERSION_LOADED: 4,
+			PREDOWNLOAD_MANIFEST: 5,
+			DOWNLOADING_MANIFEST: 6,
+			MANIFEST_LOADED: 7,
+			NEED_UPDATE: 8,
+			READY_TO_UPDATE: 9,
+			UPDATING: 10,
+			UNZIPPING: 11,
+			UP_TO_DATE: 12,
+			FAIL_TO_UPDATE: 13
 		}
 		constructor(manifestPath: string, storagePath: string, compareCallback: (a: string, b: string) => int);
 		setVerifyCallback(callback: (path: string, assert: any) => boolean)

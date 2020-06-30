@@ -175,7 +175,9 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 break;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
                 this.isUpdating = false;
-                this.onStart('New version found, please try to update. (' + this.assetsManager.getTotalBytes() + ')');
+                let oldVersion = this.assetsManager.getLocalManifest() ? this.assetsManager.getLocalManifest().getVersion() : " null";
+                let newVersion = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
+                this.onStart('Old version ' + oldVersion + ' ,New version ' + newVersion + ' found, please try to update. (' + this.assetsManager.getTotalBytes() + ')');
                 this.updateVersion();
                 break;
             default:
@@ -201,6 +203,12 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             return;
         }
 
+        if ([jsb.AssetsManager.State.UPDATING, jsb.AssetsManager.State.UNZIPPING, jsb.AssetsManager.State.UP_TO_DATE].indexOf(this.assetsManager.getState())) {
+
+            this.onComplete("no need to update", false);
+            return;
+        }
+
 
 
         if (this.assetsManager.getState() === jsb.AssetsManager.State.UNINITED) {
@@ -217,6 +225,9 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
         console.log(" start update ...");
         this.assetsManager.update();
+        setInterval(() => {
+            console.log(" update state:", this.assetsManager.getState())
+        }, 1000)
         this.isUpdating = true;
     }
 
