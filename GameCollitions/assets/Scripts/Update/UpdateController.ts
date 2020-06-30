@@ -82,20 +82,23 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private onError(msg: string, canRetry: boolean = false) {
+        console.log(" this.errorCallback:", this.errorCallback.length)
         for (let method of this.errorCallback) {
             method.callback.apply(method.target, [msg, canRetry]);
         }
     }
 
     private onComplete(msg: string, needRestart: boolean = false) {
+        console.log(" this.completeCallback:", this.completeCallback.length)
         for (let method of this.completeCallback) {
             method.callback.apply(method.target, [msg, needRestart]);
         }
     }
 
     private onStart(msg: string) {
+        console.log(" this.startCallback:", this.startCallback.length)
         for (let method of this.startCallback) {
-            method.callback.apply(method.target, msg);
+            method.callback.apply(method.target, [msg]);
         }
     }
 
