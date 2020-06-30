@@ -224,6 +224,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     private updateCallback(event: any) {
         let needRestart = false;
         let failed = false;
+        console.log("update event code:", event.getEventCode());
         switch (event.getEventCode()) {
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
                 this.onError('No local manifest file found, hot update skipped.')
