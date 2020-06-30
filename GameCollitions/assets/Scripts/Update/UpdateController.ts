@@ -161,7 +161,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private checkUpdateCallback(event: any) {
-        cc.log('Code: ' + event.getEventCode());
+        console.log('checkUpdateCallback Code: ' + event.getEventCode());
         switch (event.getEventCode()) {
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
                 this.onError("No local manifest file found, hot update skipped.");
@@ -171,7 +171,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 this.onError("Fail to download manifest file, hot update skipped.");
                 break;
             case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
-                this.onComplete("Already up to date with the latest remote version.");
+                let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
+                this.onComplete("Already up to date with the latest remote version :" + newVersionStr);
                 break;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
                 this.isUpdating = false;
@@ -184,7 +185,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 return;
         }
 
-        this.assetsManager.setEventCallback(null);
+
 
 
     }
@@ -203,9 +204,11 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             return;
         }
 
-        if ([jsb.AssetsManager.State.UPDATING, jsb.AssetsManager.State.UNZIPPING, jsb.AssetsManager.State.UP_TO_DATE].indexOf(this.assetsManager.getState())) {
+        if ([jsb.AssetsManager.State.UPDATING,
+        jsb.AssetsManager.State.UNZIPPING,
+        jsb.AssetsManager.State.UP_TO_DATE].indexOf(this.assetsManager.getState()) >= 0) {
 
-            this.onComplete("no need to update: " + jsb.AssetsManager.State[this.assetsManager.getState()], false);
+            this.onComplete("no need to update: " + this.assetsManager.getState(), false);
             return;
         }
 
