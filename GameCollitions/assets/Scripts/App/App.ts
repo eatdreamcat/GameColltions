@@ -15,9 +15,12 @@ export default class App extends cc.Component {
 
     start() {
 
-        UpdateController.inst.addCompleteCallback((msg: string) => {
+        UpdateController.inst.addCompleteCallback((msg: string, needRestart: boolean) => {
 
-            InitialFacade.inst.start();
+            if (needRestart == false) {
+                InitialFacade.inst.start();
+            }
+
         }, this);
 
         UpdateController.inst.checkForUpdate();
