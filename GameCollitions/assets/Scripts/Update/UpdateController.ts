@@ -223,11 +223,9 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
         this.assetsManager.setEventCallback(this.updateCallback.bind(this));
 
-        console.log(" start update ...");
+        console.log(" start update ...:", this.assetsManager.getState());
         this.assetsManager.update();
-        setInterval(() => {
-            console.log(" update state:", this.assetsManager.getState())
-        }, 1000)
+
         this.isUpdating = true;
     }
 
