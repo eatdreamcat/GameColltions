@@ -12,6 +12,8 @@ import { SingleTon } from "../Utils/ToSingleton";
 
 const { ccclass, property } = cc._decorator;
 
+
+
 @ccclass
 export default class UpdateController extends SingleTon<UpdateController>() {
 
@@ -21,7 +23,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private init() {
-        if (jsb) {
+        if (window["jsb"]) {
             this.assetsManager = new jsb.AssetsManager(this.MANIFEST_PAth, this.STORAGE_PATH, this.versionCompareHandle);
             this.assetsManager.setVerifyCallback(this.verifyCallback.bind(this));
             if (cc.sys.os === cc.sys.OS_ANDROID) {
@@ -37,7 +39,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
 
     private assetsManager: jsb.AssetsManager = null;
-    private readonly STORAGE_PATH: string = ((jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/') + 'arcade-remote-asset');;
+    private readonly STORAGE_PATH: string = ((window["jsb"] && jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/') + 'arcade-remote-asset');;
     private readonly MANIFEST_PAth: string = ""
 
     private isUpdating: boolean = false;
