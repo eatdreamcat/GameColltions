@@ -45,6 +45,13 @@ export default class UpdateView extends BaseView {
     }
 
 
+
+    Hide() {
+        this.node.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+            this.node.active = false;
+        })));
+    }
+
     onLoad() {
         super.onLoad();
         if (this.manifest) {
@@ -66,6 +73,7 @@ export default class UpdateView extends BaseView {
             this.showButton("Restart", UpdateController.inst.restart)
         } else {
             this.Hide();
+
         }
     }
 
