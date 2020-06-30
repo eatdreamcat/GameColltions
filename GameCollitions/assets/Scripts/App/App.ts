@@ -17,7 +17,6 @@ export default class App extends cc.Component {
 
         UpdateController.inst.addCompleteCallback((msg: string) => {
 
-            console.log(" update complete:", msg);
             InitialFacade.inst.start();
         }, this);
 

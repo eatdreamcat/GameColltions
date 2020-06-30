@@ -12,6 +12,7 @@ import BaseView from "../../View/BaseView";
 import LoadingMediator from "./LoadingMediator";
 import { InitialFacade } from "../Facade/InitialFacade";
 import { StartUpSignal } from "../../GamePlay/Command/StartUpSignal";
+import UpdateController from "../../Update/UpdateController";
 
 const { ccclass, property } = cc._decorator;
 
@@ -21,7 +22,7 @@ export default class LoadingView extends BaseView {
 
 
     get Title() {
-        return this.node.getChildByName("Title").getComponent(cc.Label);
+        return this.Progress.getChildByName("Title").getComponent(cc.Label);
     }
 
     get Progress() {
@@ -38,6 +39,13 @@ export default class LoadingView extends BaseView {
         this.node.scale = 1;
         this.Bar.x = this.StartX;
         this.BindMedaitor(LoadingMediator);
+
+        this.Progress.opacity = 0;
+
+        UpdateController.inst.addCompleteCallback((msg: string) => {
+            this.Progress.runAction(cc.fadeIn(0.3));
+            InitialFacade.inst.start();
+        }, this);
     }
 
     private progress = 0;
@@ -47,7 +55,9 @@ export default class LoadingView extends BaseView {
     update(dt: number) {
 
         this.progress += dt * 0.3;
-        this.progress = Math.min(this.progress, InitialFacade.inst.LoadPercent)
+        this.progress = Math.min(this.progress, InitialFacade.inst.LoadPercent);
+
+
         this.Title.string = "Loading " + (this.progress * 100).toFixed(0) + '%';
         this.Bar.x = (this.EndX - this.StartX) * this.progress + this.StartX;
 

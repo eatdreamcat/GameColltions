@@ -9,7 +9,6 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { SingleTon } from "../Utils/ToSingleton";
-import main from "../../../packages/hot-update/main";
 
 const { ccclass, property } = cc._decorator;
 
@@ -130,10 +129,13 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             return "Version update is on process...";
         }
 
+        console.log(" start check for update ...");
+
 
         if (this.assetsManager.getState() === jsb.AssetsManager.State.UNINITED) {
             // Resolve md5 url
             var url = this.manifest.nativeUrl;
+            console.log(" native url:", url)
             if (cc.loader.md5Pipe) {
                 url = cc.loader.md5Pipe.transformURL(url);
             }
@@ -178,6 +180,11 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         this.assetsManager.setEventCallback(null);
 
         this.isUpdating = false;
+    }
+
+
+    getUpdateDescription() {
+        return "";
     }
 
     private updateVersion() {
@@ -330,7 +337,10 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     destory() {
-        this.assetsManager.setEventCallback(null);
+        if (this.assetsManager) {
+            this.assetsManager.setEventCallback(null);
+        }
+
         this.startCallback = [];
         this.completeCallback = [];
         this.errorCallback = [];
