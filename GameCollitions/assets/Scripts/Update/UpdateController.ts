@@ -82,7 +82,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private onError(msg: string, canRetry: boolean = false) {
-        console.log(" this.errorCallback:", this.errorCallback.length)
+        console.log(" this.errorCallback:", this.errorCallback.length, "error:", msg)
         for (let method of this.errorCallback) {
             method.callback.apply(method.target, [msg, canRetry]);
         }
@@ -172,7 +172,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 this.onComplete("Already up to date with the latest remote version.");
                 break;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
-
+                this.isUpdating = false;
                 this.onStart('New version found, please try to update. (' + this.assetsManager.getTotalBytes() + ')');
                 this.updateVersion();
                 break;
@@ -182,7 +182,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
         this.assetsManager.setEventCallback(null);
 
-        this.isUpdating = false;
+
     }
 
 
@@ -213,6 +213,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
         this.assetsManager.setEventCallback(this.updateCallback.bind(this));
 
+        console.log(" start update ...");
         this.assetsManager.update();
         this.isUpdating = true;
     }
