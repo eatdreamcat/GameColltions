@@ -243,7 +243,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 failed = true;
                 break;
             case jsb.EventAssetsManager.UPDATE_PROGRESSION:
-                this.onProgress(event.getMessage() ? "Updated file:" + event.getMessage() : "", event.getPercent());
+                this.onProgress(event.getMessage() ? "Updated file:" + event.getMessage() : "Updating:" + (event.getPercent() * 100).toFixed(0) + "%", event.getPercent());
                 break;
             case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
             case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
