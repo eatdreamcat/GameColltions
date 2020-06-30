@@ -205,7 +205,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
         if ([jsb.AssetsManager.State.UPDATING, jsb.AssetsManager.State.UNZIPPING, jsb.AssetsManager.State.UP_TO_DATE].indexOf(this.assetsManager.getState())) {
 
-            this.onComplete("no need to update", false);
+            this.onComplete("no need to update: " + jsb.AssetsManager.State[this.assetsManager.getState()], false);
             return;
         }
 
