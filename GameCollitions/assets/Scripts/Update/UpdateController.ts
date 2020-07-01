@@ -97,10 +97,10 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         }
     }
 
-    private onStart(msg: string) {
+    private onStart(msg: string, go2AppStore: boolean = false) {
         console.log(" this.startCallback:", this.startCallback.length)
         for (let method of this.startCallback) {
-            method.callback.apply(method.target, [msg]);
+            method.callback.apply(method.target, [msg, go2AppStore]);
         }
     }
 
@@ -175,11 +175,24 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 this.onComplete("Already up to date with the latest remote version :" + newVersionStr);
                 break;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
+
                 this.isUpdating = false;
-                let oldVersion = this.assetsManager.getLocalManifest() ? this.assetsManager.getLocalManifest().getVersion() : " null";
-                let newVersion = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
-                this.onStart('Old version ' + oldVersion + ' ,New version ' + newVersion + ' found, please try to update. (' + this.assetsManager.getTotalBytes() + ')');
-                this.updateVersion();
+                let oldVersion = this.assetsManager.getLocalManifest() ? this.assetsManager.getLocalManifest().getVersion() : "null";
+                let newVersion = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : "null";
+
+                console.log("New version found, old:", oldVersion, ", new: ", newVersion);
+                if (oldVersion == "null" || newVersion == "null") {
+
+                } else {
+                    let bigOldVersion = oldVersion.split(".")[0];
+                    let bigNewVersion = newVersion.split(".")[0];
+                    if (bigNewVersion > bigOldVersion) {
+                        this.onStart("new version found, go to store to download new app.", true);
+                    } else {
+                        this.onStart("new version found, update process start.", false);
+                        this.updateVersion();
+                    }
+                }
                 break;
             default:
                 return;
@@ -284,7 +297,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             // Prepend the manifest's search path
             let searchPaths = jsb.fileUtils.getSearchPaths();
             let newPaths = this.assetsManager.getLocalManifest().getSearchPaths();
-            console.log(JSON.stringify(newPaths));
+            console.log("new path:", JSON.stringify(newPaths));
             Array.prototype.unshift.apply(searchPaths, newPaths);
             // This value will be retrieved and appended to the default search path during game startup,
             // please refer to samples/js-tests/main.js for detailed usage.

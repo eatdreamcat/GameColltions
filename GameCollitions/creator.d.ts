@@ -24850,7 +24850,7 @@ declare namespace jsb {
 		getState(): number;
 		loadLocalManifest(url: string): void;
 		loadLocalManifest(manifest: Manifest, storagePath: string): void;
-		getLocalManifest(): any;
+		getLocalManifest(): Manifest;
 		checkUpdate(): void;
 		downloadFailedAssets(): void;
 		update(): void;

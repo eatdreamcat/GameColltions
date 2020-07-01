@@ -108,8 +108,8 @@ export default class UpdateView extends BaseView {
         this.Description.string = UpdateController.inst.getUpdateDescription();
     }
 
-    onStart(msg: string) {
-        console.log(" startUpdate:", msg);
+    onStart(msg: string, gotoAppStore: boolean) {
+        console.log(" startUpdate:", msg, ",gotoAppStore:", gotoAppStore);
         this.Show();
         this.setDesprition();
     }
