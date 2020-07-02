@@ -309,6 +309,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             let newPaths = this.assetsManager.getLocalManifest().getSearchPaths();
             console.log("new path:", JSON.stringify(newPaths));
             Array.prototype.unshift.apply(searchPaths, newPaths);
+
+            console.log("new searchPaths:", JSON.stringify(searchPaths));
             // This value will be retrieved and appended to the default search path during game startup,
             // please refer to samples/js-tests/main.js for detailed usage.
             // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
