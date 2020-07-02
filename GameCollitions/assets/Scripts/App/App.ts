@@ -10,11 +10,6 @@ export default class App extends cc.Component {
 
     onLoad() {
         console.log(" App onLoad ")
-
-    }
-
-    start() {
-
         UpdateController.inst.addCompleteCallback((msg: string, needRestart: boolean) => {
 
             if (needRestart == false) {
@@ -23,7 +18,12 @@ export default class App extends cc.Component {
 
         }, this);
 
+    }
+
+    start() {
+
         UpdateController.inst.checkForUpdate();
+
     }
 
 

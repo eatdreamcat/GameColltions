@@ -45,13 +45,19 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     private isUpdating: boolean = false;
     private manifest: cc.Asset = null;
     private completeCallback: { target: any, callback: (msg: string, needRestart: boolean) => void }[] = [];
-    private startCallback: { target: any, callback: (msg: string) => void }[] = [];
+    private startCallback: { target: any, callback: (msg: string, go2AppStore: boolean) => void }[] = [];
     private errorCallback: { target: any, callback: (msg: string, canRetry: boolean) => void }[] = [];
     private progressCallback: { target: any, callback: (msg: string, progress: number) => void }[] = [];
 
 
     public setManifest(manifest: cc.Asset) {
         this.manifest = manifest;
+    }
+
+    public getVersion(): string {
+        if (this.assetsManager == null) return "";
+        if (this.assetsManager.getLocalManifest() == null) return "";
+        return this.assetsManager.getLocalManifest().getVersion();
     }
 
     addCompleteCallback(callback: (msg: string, needRestart: boolean) => void, target: any) {
@@ -69,7 +75,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         })
     }
 
-    addStartCallback(target: any, callback: (msg: string) => void) {
+    addStartCallback(target: any, callback: (msg: string, go2AppStore: boolean) => void) {
         this.startCallback.push({
             target: target,
             callback: callback
@@ -81,6 +87,10 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             target: target,
             callback: callback
         })
+    }
+
+    public triggeError(msg: string, canRetry: boolean = false) {
+        this.onError(msg, canRetry)
     }
 
     private onError(msg: string, canRetry: boolean = false) {

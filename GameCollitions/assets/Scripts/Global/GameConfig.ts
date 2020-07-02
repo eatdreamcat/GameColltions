@@ -16,13 +16,13 @@ export class GameConfig extends SingleTon<GameConfig>() {
     public static readonly Path = "Config/gameConfig.json";
 
     public static get Url() {
-        return "https://vicat.wang/GameRes/"
+        return "http://123.56.12.185/GameRes/"
     }
 
     private config: ConfigJson;
     public loadConfig(callback: Function) {
 
-        let loadFunc = ()=>{
+        let loadFunc = () => {
             cc.loader.load(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err: any, res: ConfigJson) => {
                 if (err) {
                     console.error(JSON.stringify(err));
@@ -37,8 +37,8 @@ export class GameConfig extends SingleTon<GameConfig>() {
             });
         }
 
-        let loadFuncInNative = () =>{
-            this.loadConfigInNative(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err:any, res:string)=>{
+        let loadFuncInNative = () => {
+            this.loadConfigInNative(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err: any, res: string) => {
                 if (err) {
                     console.error(JSON.stringify(err))
                     setTimeout(() => {
@@ -50,8 +50,8 @@ export class GameConfig extends SingleTon<GameConfig>() {
                     callback();
                 }
             })
-        } 
-        
+        }
+
 
         if (cc.sys.isNative) {
             loadFuncInNative();
@@ -66,29 +66,29 @@ export class GameConfig extends SingleTon<GameConfig>() {
 
     public loadConfigInNative(url: string, callback) {
         var xhr = cc.loader.getXMLHttpRequest(),
-        errInfo = 'Load text file failed: ' + url;
-    xhr.open('GET', url, true);
-    if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
-    xhr.onload = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200 || xhr.status === 0) {
-                callback(null, xhr.responseText);
+            errInfo = 'Load text file failed: ' + url;
+        xhr.open('GET', url, true);
+        if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
+        xhr.onload = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    callback(null, xhr.responseText);
+                }
+                else {
+                    callback({ status: xhr.status, errorMessage: errInfo + '(wrong status)' });
+                }
             }
             else {
-                callback({status:xhr.status, errorMessage:errInfo + '(wrong status)'});
+                callback({ status: xhr.status, errorMessage: errInfo + '(wrong readyState)' });
             }
-        }
-        else {
-            callback({status:xhr.status, errorMessage:errInfo + '(wrong readyState)'});
-        }
-    };
-    xhr.onerror = function(){
-        callback({status:xhr.status, errorMessage:errInfo + '(error)'});
-    };
-    xhr.ontimeout = function(){
-        callback({status:xhr.status, errorMessage:errInfo + '(time out)'});
-    };
-    xhr.send(null);
+        };
+        xhr.onerror = function () {
+            callback({ status: xhr.status, errorMessage: errInfo + '(error)' });
+        };
+        xhr.ontimeout = function () {
+            callback({ status: xhr.status, errorMessage: errInfo + '(time out)' });
+        };
+        xhr.send(null);
     }
 
 }

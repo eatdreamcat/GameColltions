@@ -33,6 +33,10 @@ export default class LoadingView extends BaseView {
         return this.Progress.getChildByName("Mask").getChildByName("bar")
     }
 
+    get VersionInfo() {
+        return this.node.getChildByName("VersionInfo").getComponent(cc.Label);
+    }
+
 
     onLoad() {
         console.log(" Loading View onLoad ")
@@ -42,8 +46,10 @@ export default class LoadingView extends BaseView {
 
         this.Progress.opacity = 0;
 
+        this.VersionInfo.string = UpdateController.inst.getVersion();
         UpdateController.inst.addCompleteCallback((msg: string) => {
             this.Progress.runAction(cc.fadeIn(0.3));
+            this.VersionInfo.string = UpdateController.inst.getVersion();
         }, this);
     }
 
