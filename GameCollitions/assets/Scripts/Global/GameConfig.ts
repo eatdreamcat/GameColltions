@@ -16,7 +16,7 @@ export class GameConfig extends SingleTon<GameConfig>() {
     public static readonly Path = "Config/gameConfig.json";
 
     public static get Url() {
-        return "http://123.56.12.185/GameRes/"
+        return "https://bigfish.host/GameRes/"
     }
 
     private config: ConfigJson;
