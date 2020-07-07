@@ -24888,7 +24888,7 @@ declare namespace jsb {
 		getVersion(): string;
 		parseJSONString(str1: string, str2: string);
 		getVersionFileUrl(): string;
-		getSearchPaths(): [];
+		getSearchPaths(): string[];
 	}
 
 	export class EventAssetsManager {

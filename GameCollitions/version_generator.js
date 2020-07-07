@@ -85,7 +85,7 @@ function readDir(dir, obj) {
     }
 }
 
-var mkdirSync = function (path) {
+let mkdirSync = function (path) {
     try {
         fs.mkdirSync(path);
     } catch (e) {
@@ -93,7 +93,42 @@ var mkdirSync = function (path) {
     }
 }
 
-// Iterate assets and src folder
+let generatedVersion = function () {
+
+    let version = 100;
+    if (fs.existsSync("./version")) {
+        version = fs.readFileSync("./version").toString();
+    }
+
+    let newVersion = version2str(version2Int(version) + 1)
+    console.log("old version:", version, ", new version:", newVersion);
+    fs.writeFileSync("./version", newVersion);
+    manifest.version = newVersion;
+}
+
+/**
+ * 100 to 1.0.0
+ * @param {*} version 
+ */
+let version2str = function (version) {
+
+    let a = Math.floor(version / 100);
+    let b = Math.floor(version / 10) % 10;
+    let c = Math.floor(version) % 10;
+    return a + "." + b + "." + c
+}
+
+let version2Int = function (version) {
+
+    return parseInt(version.toString().split(".").join(""))
+}
+
+
+// 1. 更新版本信息
+
+generatedVersion();
+
+//2. Iterate assets and src folder
 readDir(path.join(src, '/build/jsb-link/src'), manifest.assets);
 readDir(path.join(src, '/build/jsb-link/res'), manifest.assets);
 

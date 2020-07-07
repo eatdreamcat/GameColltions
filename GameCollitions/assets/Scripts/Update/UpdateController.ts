@@ -103,7 +103,9 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     private onComplete(msg: string, needRestart: boolean = false) {
         console.log(" this.completeCallback:", this.completeCallback.length)
         for (let method of this.completeCallback) {
-            method.callback.apply(method.target, [msg, needRestart]);
+            setTimeout(() => {
+                method.callback.apply(method.target, [msg, needRestart]);
+            }, 0);
         }
     }
 
@@ -182,7 +184,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 break;
             case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
                 let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
-                this.onComplete("Already up to date with the latest remote version :" + newVersionStr);
+                let oldVersionStr = this.assetsManager.getLocalManifest() ? this.assetsManager.getLocalManifest().getVersion() : "null";
+                this.onComplete("Already up to date with the latest remote version :" + newVersionStr + ", local version :" + oldVersionStr);
                 break;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
 
@@ -266,7 +269,10 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 failed = true;
                 break;
             case jsb.EventAssetsManager.UPDATE_PROGRESSION:
-                this.onProgress(event.getMessage() ? "Updated file:" + event.getMessage() : "Updating:" + (event.getPercent() * 100).toFixed(0) + "%", event.getPercent());
+                let percent = event.getPercent();
+                if (percent == "NaN" || typeof percent != "number") percent = 0;
+
+                this.onProgress(event.getMessage() ? "Updated file:" + event.getMessage() : "Updating:" + (percent * 100).toFixed(0) + "%", percent);
                 break;
             case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
             case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
@@ -307,6 +313,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             // Prepend the manifest's search path
             let searchPaths = jsb.fileUtils.getSearchPaths();
             let newPaths = this.assetsManager.getLocalManifest().getSearchPaths();
+            newPaths[0] = newPaths[0] + ("v" + this.getVersion() + "/")
             console.log("new path:", JSON.stringify(newPaths));
             Array.prototype.unshift.apply(searchPaths, newPaths);
 
