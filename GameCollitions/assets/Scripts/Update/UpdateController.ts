@@ -262,6 +262,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     private updateCallback(event: any) {
         let needRestart = false;
         let failed = false;
+
+        let completeCallback = null;
         console.log("update event code:", event.getEventCode());
         switch (event.getEventCode()) {
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
@@ -280,12 +282,19 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 failed = true;
                 break;
             case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
-                let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
-                this.onComplete("Already up to date with the latest remote version :" + newVersionStr);
+                completeCallback = () => {
+                    let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
+                    this.onComplete("Already up to date with the latest remote version :" + newVersionStr);
+
+                }
                 failed = true;
                 break;
             case jsb.EventAssetsManager.UPDATE_FINISHED:
-                this.onComplete('Update finished. ' + event.getMessage(), true);
+                completeCallback = () => {
+                    let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
+                    this.onComplete('Update finished. new : ' + newVersionStr + event.getMessage(), true);
+
+                }
                 needRestart = true;
                 break;
             case jsb.EventAssetsManager.UPDATE_FAILED:
@@ -317,12 +326,18 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             console.log("new path:", JSON.stringify(newPaths));
             Array.prototype.unshift.apply(searchPaths, newPaths);
 
-            console.log("new searchPaths:", JSON.stringify(searchPaths));
+
             // This value will be retrieved and appended to the default search path during game startup,
             // please refer to samples/js-tests/main.js for detailed usage.
             // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
             cc.sys.localStorage.setItem('HotUpdateSearchPaths', JSON.stringify(searchPaths));
             jsb.fileUtils.setSearchPaths(searchPaths);
+            console.log("new searchPaths:", JSON.stringify(searchPaths));
+            console.log(" paths storage:", cc.sys.localStorage.getItem('HotUpdateSearchPaths'))
+        }
+
+        if (completeCallback) {
+            completeCallback();
         }
     }
 
