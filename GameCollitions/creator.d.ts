@@ -8605,7 +8605,11 @@ declare namespace cc {
 		/** Indicate the real pixel resolution of the whole game window */
 		static windowPixelResolution: Size;
 		/** cc.sys.localStorage is a local storage component. */
-		static localStorage: any;
+		static localStorage: {
+			setItem(key: string, val: string): void;
+			getItem(key: string): string;
+			removeItem(key: string): void;
+		};
 		/** The capabilities of the current platform */
 		static capabilities: any;
 		/**
@@ -24863,6 +24867,7 @@ declare namespace jsb {
 		getRemoteManifest(): Manifest;
 		prepareUpdate(): void;
 		isResuming(): boolean;
+		getStoragePath(): string;
 
 		// getAssetId(): string;
 		// getCURLECode(): number;
@@ -24908,6 +24913,19 @@ declare namespace jsb {
 		public static getWritablePath(): string
 		public static getSearchPaths(): string
 		public static setSearchPaths(path: string): void;
+		public static writeDataToFile(data: cc.Data, str: string): boolean;
+		public static writeStringToFile(data: string, fullPath: string): boolean;
+		public static fullPathForFilename(filename: string): string;
+		public static getStringFromFile(filename: string): string;
+		public static removeFile(filepath: string): boolean;
+		public static getDataFromFile(filename: string): cc.Data;
+		public static isAbsolutePath(path: string): boolean;
+		public static renameFile(path: string, oldname: string, name: string): boolean;
+		public static normalizePath(path: string): string;
+		public static getDefaultResourceRootPath(): string;
+		public static loadFilenameLookupDictionaryFromFile(filename: string);
+		public static isPopupNotify(): boolean;
+		public static isFileExist(fileName: string): boolean;
 	}
 }
 /** Running in the editor. */

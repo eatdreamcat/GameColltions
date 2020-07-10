@@ -1,4 +1,5 @@
 import { SingleTon } from "../Utils/ToSingleton";
+import Downloader from "../Utils/Downloader";
 
 
 interface ConfigJson {
@@ -16,7 +17,7 @@ export class GameConfig extends SingleTon<GameConfig>() {
     public static readonly Path = "Config/gameConfig.json";
 
     public static get Url() {
-        return "https://bigfish.host/GameRes/"
+        return "https://vicat.wang/GameRes/"
     }
 
     private config: ConfigJson;
@@ -64,31 +65,9 @@ export class GameConfig extends SingleTon<GameConfig>() {
         return this.config;
     }
 
-    public loadConfigInNative(url: string, callback) {
-        var xhr = cc.loader.getXMLHttpRequest(),
-            errInfo = 'Load text file failed: ' + url;
-        xhr.open('GET', url, true);
-        if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
-        xhr.onload = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200 || xhr.status === 0) {
-                    callback(null, xhr.responseText);
-                }
-                else {
-                    callback({ status: xhr.status, errorMessage: errInfo + '(wrong status)' });
-                }
-            }
-            else {
-                callback({ status: xhr.status, errorMessage: errInfo + '(wrong readyState)' });
-            }
-        };
-        xhr.onerror = function () {
-            callback({ status: xhr.status, errorMessage: errInfo + '(error)' });
-        };
-        xhr.ontimeout = function () {
-            callback({ status: xhr.status, errorMessage: errInfo + '(time out)' });
-        };
-        xhr.send(null);
+    public loadConfigInNative(url: string, callback: (err: any, res: string) => void) {
+
+        Downloader.DownloadText(url, callback);
     }
 
 }

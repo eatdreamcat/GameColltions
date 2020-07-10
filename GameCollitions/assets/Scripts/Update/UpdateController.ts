@@ -39,7 +39,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
 
     private assetsManager: jsb.AssetsManager = null;
-    private readonly STORAGE_PATH: string = ((window["jsb"] && jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/') + 'arcade-remote-asset');;
+    private readonly STORAGE_PATH: string = ((window["jsb"] && jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/') + 'game-home');
     private readonly MANIFEST_PAth: string = ""
 
     private isUpdating: boolean = false;
@@ -58,6 +58,10 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         if (this.assetsManager == null) return "";
         if (this.assetsManager.getLocalManifest() == null) return "";
         return this.assetsManager.getLocalManifest().getVersion();
+    }
+
+    public get WritablePath() {
+        return window["jsb"] && jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/';
     }
 
     addCompleteCallback(callback: (msg: string, needRestart: boolean) => void, target: any) {
@@ -101,12 +105,22 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private onComplete(msg: string, needRestart: boolean = false) {
-        console.log(" this.completeCallback:", this.completeCallback.length)
+        console.log(" on update complete:", this.getVersion());
+        console.log("storagePath:", this.getStoragePath());
+        console.log("search path:", this.getSearchPaths());
         for (let method of this.completeCallback) {
             setTimeout(() => {
                 method.callback.apply(method.target, [msg, needRestart]);
             }, 0);
         }
+    }
+
+    public getStoragePath() {
+        return this.assetsManager ? this.assetsManager.getStoragePath() : ""
+    }
+
+    public getSearchPaths() {
+        return window["jsb"] ? jsb.fileUtils.getSearchPaths() : ""
     }
 
     private onStart(msg: string, go2AppStore: boolean = false) {
@@ -117,21 +131,32 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private onProgress(msg: string, progress: number) {
+
         for (let method of this.progressCallback) {
             method.callback.apply(method.target, [msg, progress]);
         }
     }
 
-    loadCustomManifest(manifestStr: string) {
+    loadCustomManifest(manifestStr: string, storagePath: string = this.STORAGE_PATH) {
         if (this.assetsManager == null) {
             return;
         }
 
         if (this.assetsManager.getState() == jsb.AssetsManager.State.UNINITED) {
-            let manifest = new jsb.Manifest(manifestStr, this.STORAGE_PATH);
-            this.assetsManager.loadLocalManifest(manifest, this.STORAGE_PATH);
+            let manifest = new jsb.Manifest(manifestStr, storagePath);
+            this.assetsManager.loadLocalManifest(manifest, storagePath);
         }
 
+    }
+
+    setCustomManifest(manifestStr: string, storagePath: string = this.STORAGE_PATH) {
+        if (this.assetsManager == null) {
+            return;
+        }
+
+        let manifest = new jsb.Manifest(manifestStr, storagePath);
+        this.assetsManager.loadLocalManifest(manifest, storagePath);
+        console.log("update customManifest:", this.assetsManager.getStoragePath());
     }
 
     checkForUpdate() {
@@ -197,6 +222,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 if (oldVersion == "null" || newVersion == "null") {
 
                 } else {
+                    // this.assetsManager.loadLocalManifest(this.assetsManager.getLocalManifest(), this.STORAGE_PATH + "-v" + newVersion);
+                    console.log("storage path:", this.assetsManager.getStoragePath());
                     let bigOldVersion = oldVersion.split(".")[0];
                     let bigNewVersion = newVersion.split(".")[0];
                     if (bigNewVersion > bigOldVersion) {
@@ -259,6 +286,17 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
 
+    private versionToInt(version: string) {
+        return parseInt(version.toString().split(".").join(""))
+    }
+
+    private versionToString(version: number) {
+        let a = Math.floor(version / 100);
+        let b = Math.floor(version / 10) % 10;
+        let c = Math.floor(version) % 10;
+        return a + "." + b + "." + c
+    }
+
     private updateCallback(event: any) {
         let needRestart = false;
         let failed = false;
@@ -272,7 +310,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 break;
             case jsb.EventAssetsManager.UPDATE_PROGRESSION:
                 let percent = event.getPercent();
-                if (percent == "NaN" || typeof percent != "number") percent = 0;
+                if (percent == NaN || typeof percent != "number") percent = 0;
 
                 this.onProgress(event.getMessage() ? "Updated file:" + event.getMessage() : "Updating:" + (percent * 100).toFixed(0) + "%", percent);
                 break;
@@ -321,22 +359,30 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
             // Prepend the manifest's search path
             let searchPaths = jsb.fileUtils.getSearchPaths();
+            console.log("old searchPaths:", searchPaths)
             let newPaths = this.assetsManager.getLocalManifest().getSearchPaths();
-            newPaths[0] = newPaths[0] + ("v" + this.getVersion() + "/")
+            //newPaths[0] = newPaths[0] + ("v" + this.getVersion() + "/")
             console.log("new path:", JSON.stringify(newPaths));
-            Array.prototype.unshift.apply(searchPaths, newPaths);
+            for (let path of newPaths) {
+                if (searchPaths.indexOf(path) < 0) {
+                    Array.prototype.unshift.apply(searchPaths, path);
+                }
+            }
 
 
             // This value will be retrieved and appended to the default search path during game startup,
             // please refer to samples/js-tests/main.js for detailed usage.
             // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
-            cc.sys.localStorage.setItem('HotUpdateSearchPaths', JSON.stringify(searchPaths));
+            cc.sys.localStorage.setItem("home-page", JSON.stringify(searchPaths));
+            // 删除游戏的选择记录
+            cc.sys.localStorage.removeItem("select-game");
+
             jsb.fileUtils.setSearchPaths(searchPaths);
             console.log("new searchPaths:", JSON.stringify(searchPaths));
-            console.log(" paths storage:", cc.sys.localStorage.getItem('HotUpdateSearchPaths'))
         }
 
         if (completeCallback) {
+
             completeCallback();
         }
     }

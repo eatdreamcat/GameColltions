@@ -1,6 +1,9 @@
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
+const {
+    error
+} = require('console');
 
 var manifest = {
     packageUrl: 'https://vicat.wang/Remote-Hot-Update/Arcade/',
@@ -93,6 +96,7 @@ let mkdirSync = function (path) {
     }
 }
 
+// 生成版本号
 let generatedVersion = function () {
 
     let version = 100;
@@ -124,13 +128,86 @@ let version2Int = function (version) {
 }
 
 
-// 1. 更新版本信息
+function deleteFolder(path) {
+    let files = [];
+    if (fs.existsSync(path)) {
+        files = fs.readdirSync(path);
+        files.forEach(function (file, index) {
+            let curPath = path + "/" + file;
+            if (fs.statSync(curPath).isDirectory()) {
+                deleteFolder(curPath);
+            } else {
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+}
+
+function CopyDirectory(src, dest) {
+
+    if (fs.existsSync(dest) == false) {
+        fs.mkdirSync(dest);
+    }
+    if (fs.existsSync(src) == false) {
+        return false;
+    }
+    // console.log("src:" + src + ", dest:" + dest);
+    // 拷贝新的内容进去
+    var dirs = fs.readdirSync(src);
+    dirs.forEach(function (item) {
+        var item_path = path.join(src, item);
+        var temp = fs.statSync(item_path);
+        if (temp.isFile()) { // 是文件
+            // console.log("Item Is File:" + item);
+            fs.copyFileSync(item_path, path.join(dest, item));
+        } else if (temp.isDirectory()) { // 是目录
+            // console.log("Item Is Directory:" + item);
+            CopyDirectory(item_path, path.join(dest, item));
+        }
+    });
+}
+
+// 拷贝资源
+let copyAssets = function (from, dest) {
+    if (fs.existsSync(dest)) deleteFolder(dest);
+
+
+    console.log(from)
+    if (!fs.existsSync(from)) {
+        throw new error(from, "资源不存在")
+    }
+
+    if (!fs.existsSync(from + "src")) {
+        throw new error("src资源不存在")
+    }
+
+    if (!fs.existsSync(from + "res")) {
+        throw new error("res")
+    }
+
+    mkdirSync(dest);
+
+    mkdirSync(dest + "/src");
+    mkdirSync(dest + "/res");
+
+    console.log("目标资源路径：", dest)
+    CopyDirectory(from + "/src", dest + "/src");
+    CopyDirectory(from + "/res", dest + "/res");
+    console.log(from + " 拷贝成功")
+}
+
+
+
+// 1.拷贝资源
+copyAssets("./build/jsb-link/", "./hot-update/");
+
+// 2. 更新版本信息
 
 generatedVersion();
-
-//2. Iterate assets and src folder
-readDir(path.join(src, '/build/jsb-link/src'), manifest.assets);
-readDir(path.join(src, '/build/jsb-link/res'), manifest.assets);
+//3. 根据资源路径生成manifest
+readDir(path.join(src, '/src'), manifest.assets);
+readDir(path.join(src, '/res'), manifest.assets);
 
 var destManifest = path.join(dest, 'project.manifest');
 var destVersion = path.join(dest, 'version.manifest');
