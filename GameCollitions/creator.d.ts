@@ -24926,6 +24926,8 @@ declare namespace jsb {
 		public static loadFilenameLookupDictionaryFromFile(filename: string);
 		public static isPopupNotify(): boolean;
 		public static isFileExist(fileName: string): boolean;
+		public static isDirectoryExist(dirPath: string): boolean;
+		public static createDirectory(dirPath: string): boolean;
 	}
 }
 /** Running in the editor. */

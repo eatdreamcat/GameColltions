@@ -43,9 +43,11 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
 
 
-        if (jsb.fileUtils.isFileExist(this.gameName)) {
-            let manifestStr = jsb.fileUtils.getStringFromFile(this.gameName);
-            UpdateController.inst.setCustomManifest(manifestStr, jsb.fileUtils.getWritablePath() + "/" + this.gameName);
+        if (jsb.fileUtils.isFileExist(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest")) {
+            console.log("  找到 manifest 缓存");
+            let manifestStr = jsb.fileUtils.getStringFromFile(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest");
+            UpdateController.inst.setCustomManifest(manifestStr, jsb.fileUtils.getWritablePath() + this.gameName);
+
         } else {
             Downloader.DownloadText("https://vicat.wang/Remote-Hot-Update/" + this.gameName + "/project.manifest", this.onDownloadManifestComplete.bind(this));
         }
@@ -55,8 +57,18 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         if (err) {
             console.error(err);
         } else {
-            console.log(text);
-            UpdateController.inst.setCustomManifest(text, jsb.fileUtils.getWritablePath() + "/" + this.gameName);
+            UpdateController.inst.setCustomManifest(text, jsb.fileUtils.getWritablePath() + this.gameName);
+            let fullPath = jsb.fileUtils.getWritablePath() + this.gameName + "/";
+            console.log("fullPath:", fullPath);
+            if ((jsb.fileUtils.isDirectoryExist(fullPath) || jsb.fileUtils.createDirectory(fullPath)) && jsb.fileUtils.writeStringToFile(text, fullPath + "/project.manifest")) {
+                console.log(this.gameName + " manifest write success...")
+            } else {
+                console.log(this.gameName + " manifest write fail...")
+            }
         }
+    }
+
+    private doNativeSelectGame() {
+
     }
 }
