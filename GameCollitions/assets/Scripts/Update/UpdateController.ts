@@ -64,6 +64,14 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         return window["jsb"] && jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/';
     }
 
+
+    clearAllCallbacks() {
+        this.completeCallback = [];
+        this.startCallback = [];
+        this.progressCallback = [];
+        this.errorCallback = [];
+    }
+
     addCompleteCallback(callback: (msg: string, needRestart: boolean) => void, target: any) {
 
         this.completeCallback.push({
@@ -149,10 +157,20 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
     }
 
+
+    /** 重新创建一个assetManager */
     setCustomManifest(manifestStr: string, storagePath: string = this.STORAGE_PATH) {
-        if (this.assetsManager == null) {
-            return;
+
+        this.assetsManager = null;
+
+        this.assetsManager = new jsb.AssetsManager(this.MANIFEST_PAth, this.STORAGE_PATH, this.versionCompareHandle);
+        this.assetsManager.setVerifyCallback(this.verifyCallback.bind(this));
+        if (cc.sys.os === cc.sys.OS_ANDROID) {
+            // Some Android device may slow down the download process when concurrent tasks is too much.
+            // The value may not be accurate, please do more test and find what's most suitable for your game.
+            this.assetsManager.setMaxConcurrentTask(2);
         }
+
 
         let manifest = new jsb.Manifest(manifestStr, storagePath);
         this.assetsManager.loadLocalManifest(manifest, storagePath);

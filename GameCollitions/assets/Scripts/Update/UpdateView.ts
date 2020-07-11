@@ -95,7 +95,8 @@ export default class UpdateView extends BaseView {
         if (canRetry) {
             this.showButton("Retry", UpdateController.inst.retry);
         } else {
-            this.Hide();
+            this.setDesprition(msg);
+            this.showButton("Restart", UpdateController.inst.restart);
         }
     }
 
@@ -104,8 +105,8 @@ export default class UpdateView extends BaseView {
         this.ProgressMsg.string = msg;
     }
 
-    setDesprition() {
-        this.Description.string = UpdateController.inst.getUpdateDescription();
+    setDesprition(msg: string = "Updating") {
+        this.Description.string = msg;
     }
 
     onStart(msg: string, gotoAppStore: boolean) {
