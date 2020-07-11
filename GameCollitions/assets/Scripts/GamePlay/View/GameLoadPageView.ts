@@ -19,7 +19,7 @@ const { ccclass, property } = cc._decorator;
 export default class GameLoadPageView extends BaseView {
 
     get Msg() {
-        return this.Progress.getChildByName("Msg").getComponent(cc.Label);
+        return this.node.getChildByName("Msg").getComponent(cc.Label);
     }
 
     get Progress() {

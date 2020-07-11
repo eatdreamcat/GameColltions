@@ -102,7 +102,7 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 131
+        "__id__": 132
       }
     ],
     "_prefab": null,
@@ -5551,6 +5551,9 @@
     "_components": [
       {
         "__id__": 130
+      },
+      {
+        "__id__": 131
       }
     ],
     "_prefab": null,
@@ -5775,6 +5778,16 @@
     },
     "_enabled": true,
     "_id": "35dU2OzNZKGJ2+1hhz4NkS"
+  },
+  {
+    "__type__": "cc.BlockInputEvents",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 126
+    },
+    "_enabled": true,
+    "_id": "39VInMXjRGjrU0/o5uxo1V"
   },
   {
     "__type__": "cc.Canvas",
