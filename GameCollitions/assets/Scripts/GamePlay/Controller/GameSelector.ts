@@ -45,18 +45,21 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         this.msg = val;
     }
 
+
+    onLoadNativeFail(name: string, special: boolean) { }
+
     onGameSelector(name: string, special: boolean) {
         console.log(" select game: ", name, ", is special version:", special);
         this.gameName = name + "-" + (special ? "Special" : "Normal");
         if (window["jsb"]) {
             this.selectGameOnJsb();
         } else {
-            this.selectGameOnWeb();
+            this.selectGameOnWeb(name, special);
         }
     }
 
-    private selectGameOnWeb() {
-        Downloader.DownloadText("https://vicat.wang/Remote-Hot-Update/" + this.gameName + "/project.manifest", this.onDownloadManifestComplete.bind(this));
+    private selectGameOnWeb(name: string, special: boolean) {
+        this.onLoadNativeFail(name, special);
     }
 
     private selectGameOnJsb() {

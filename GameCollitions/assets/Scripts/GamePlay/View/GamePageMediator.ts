@@ -3,6 +3,7 @@ import GamePageView from "./GamePageView";
 import BaseMediator from "../../View/BaseMediator";
 import { LoadGameSignal } from "../Command/LoadGameSignal";
 import { GameConfig } from "../../Global/GameConfig";
+import GameSelector from "../Controller/GameSelector";
 
 export class GamePageMediator extends BaseMediator<GamePageView> {
 
@@ -31,7 +32,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         this.CloseButton.on(cc.Node.EventType.TOUCH_END, this.Close, this);
         this.RefreshButton.on(cc.Node.EventType.TOUCH_END, this.Refresh, this);
 
-        LoadGameSignal.inst.addListenerTwo(this.startLoadGame, this);
+        GameSelector.inst.onLoadNativeFail = this.startLoadGame;
+        // LoadGameSignal.inst.addListenerTwo(this.startLoadGame, this);
     }
 
 
@@ -58,7 +60,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
         let gameUrl = special ? GameConfig.inst.Config.specialPath : GameConfig.inst.Config.normalPath;
         this.WebView.active = true;
-
+        this.WebView.width = cc.director.getWinSize().width;
+        this.WebView.height = cc.director.getWinSize().height;
         if (this.webViewNode != null && this.webViewNode.destroy) {
             this.webViewNode.destroy();
         }
