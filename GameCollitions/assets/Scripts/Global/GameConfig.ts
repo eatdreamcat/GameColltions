@@ -1,4 +1,5 @@
 import { SingleTon } from "../Utils/ToSingleton";
+import Downloader from "../Utils/Downloader";
 
 
 interface ConfigJson {
@@ -22,7 +23,7 @@ export class GameConfig extends SingleTon<GameConfig>() {
     private config: ConfigJson;
     public loadConfig(callback: Function) {
 
-        let loadFunc = ()=>{
+        let loadFunc = () => {
             cc.loader.load(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err: any, res: ConfigJson) => {
                 if (err) {
                     console.error(JSON.stringify(err));
@@ -37,8 +38,8 @@ export class GameConfig extends SingleTon<GameConfig>() {
             });
         }
 
-        let loadFuncInNative = () =>{
-            this.loadConfigInNative(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err:any, res:string)=>{
+        let loadFuncInNative = () => {
+            this.loadConfigInNative(GameConfig.Url + GameConfig.Path + "?time=" + Date.now(), (err: any, res: string) => {
                 if (err) {
                     console.error(JSON.stringify(err))
                     setTimeout(() => {
@@ -50,8 +51,8 @@ export class GameConfig extends SingleTon<GameConfig>() {
                     callback();
                 }
             })
-        } 
-        
+        }
+
 
         if (cc.sys.isNative) {
             loadFuncInNative();
@@ -64,31 +65,9 @@ export class GameConfig extends SingleTon<GameConfig>() {
         return this.config;
     }
 
-    public loadConfigInNative(url: string, callback) {
-        var xhr = cc.loader.getXMLHttpRequest(),
-        errInfo = 'Load text file failed: ' + url;
-    xhr.open('GET', url, true);
-    if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8');
-    xhr.onload = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200 || xhr.status === 0) {
-                callback(null, xhr.responseText);
-            }
-            else {
-                callback({status:xhr.status, errorMessage:errInfo + '(wrong status)'});
-            }
-        }
-        else {
-            callback({status:xhr.status, errorMessage:errInfo + '(wrong readyState)'});
-        }
-    };
-    xhr.onerror = function(){
-        callback({status:xhr.status, errorMessage:errInfo + '(error)'});
-    };
-    xhr.ontimeout = function(){
-        callback({status:xhr.status, errorMessage:errInfo + '(time out)'});
-    };
-    xhr.send(null);
+    public loadConfigInNative(url: string, callback: (err: any, res: string) => void) {
+
+        Downloader.DownloadText(url, callback);
     }
 
 }
