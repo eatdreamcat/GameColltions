@@ -18,7 +18,7 @@ export class LogHandler extends SingleTon<LogHandler>() {
 
   private logFunc: Function = console.log;
   private logMsg: any = null;
-  private static readonly VERSION = "Game template : ";
+  private static readonly VERSION = "MoneyMachine version 1.0.6 : ";
   private frameTimes = 0;
   private now = 0;
   private Frame = 20;
@@ -43,40 +43,12 @@ export class LogHandler extends SingleTon<LogHandler>() {
   }
 
   initLog(callback: Function) {
-    cc.director.once(
-      cc.Director.EVENT_AFTER_SCENE_LAUNCH,
-      () => {
-        this.frameTimes = 0;
-        this.now = Date.now();
-        this.startTime = Date.now();
-      },
-      this
-    );
 
-    cc.director.on(
-      cc.Director.EVENT_AFTER_DRAW,
-      () => {
-        this.frameTimes++;
-        this.totalFrames++;
-        if (this.frameTimes >= this.Frame) {
-          this.frameTimes = 0;
-          // this.addLog(
-          //   " draw " +
-          //     this.Frame +
-          //     " frames cost:" +
-          //     (Date.now() - this.now) +
-          //     " ms"
-          // );
-          this.now = Date.now();
-          // this.sendLog();
-        }
-      },
-      this
-    );
+    console.log(" --- init log ---");
 
     this.logFunc = callback;
     console.error = function (...args) {
-      LogHandler.inst.log("[ERROR]", args);
+      LogHandler.inst.log("[ERROR]", ...args);
     };
 
     console.warn = function (...args) {

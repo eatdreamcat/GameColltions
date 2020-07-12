@@ -31,11 +31,14 @@ export class InitialFacade {
   }
 
   private register() {
+    console.log("Init fade register");
     this.facade.registerCommand(InitialFacade.INITIALIZATION, InitialCommond);
     this.facade.registerCommand(InitialFacade.START_UP, StartGameCommond);
 
+    let self = this;
     CelerSDK.inst.init(() => {
-      this.facade.sendNotification(InitialFacade.START_UP, this);
+      self.Facade.sendNotification(InitialFacade.START_UP, self);
+
     });
   }
 
@@ -46,11 +49,12 @@ export class InitialFacade {
 
   start() {
     this.register();
+    console.log(" start ");
     for (let key of InitialFacade.TOTAL_STEPS) {
       this.loadTime[key] = Date.now();
     }
     this.facade.sendNotification(InitialFacade.INITIALIZATION, this);
-    console.log(" start ")
+
   }
 
 

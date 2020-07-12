@@ -83,18 +83,6 @@ export class CelerSDK extends SingleTon<CelerSDK>() {
       this.isNewPlayer = false;
     }
 
-    let takeImage = false;
-    const canvas = document.getElementsByTagName("canvas")[0];
-    cc.director.on(cc.Director.EVENT_AFTER_DRAW, function () {
-      if (takeImage) {
-        takeImage = false;
-        CELER_X && celerSDK.didTakeSnapshot(canvas.toDataURL("image/jpeg", 0.1));
-      }
-    });
-    CELER_X && celerSDK.provideCurrentFrameData(function () {
-      takeImage = true;
-    });
-
     if (this.celerStartCallback) {
       this.celerStartCallback();
       this.celerStartCallback = null;
