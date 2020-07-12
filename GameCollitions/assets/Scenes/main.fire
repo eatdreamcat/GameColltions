@@ -4111,8 +4111,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 500,
-      "height": 500
+      "width": 1080,
+      "height": 800
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -4156,8 +4156,8 @@
     "_useOriginalSize": false,
     "_string": "Game Loading...Game Loading...Game Loading...",
     "_N$string": "Game Loading...Game Loading...Game Loading...",
-    "_fontSize": 30,
-    "_lineHeight": 30,
+    "_fontSize": 60,
+    "_lineHeight": 65,
     "_enableWrapText": true,
     "_N$file": {
       "__uuid__": "42065667-f843-4a0c-a683-89da8c4f89de"
@@ -4216,13 +4216,13 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -210.2,
+      "y": -616,
       "z": 0
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
+      "x": 2,
+      "y": 2,
       "z": 1
     },
     "_rotationX": 0,
