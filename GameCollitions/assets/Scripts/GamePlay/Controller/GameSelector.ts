@@ -121,7 +121,8 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         UpdateController.inst.clearAllCallbacks();
         UpdateController.inst.addCompleteCallback(this.doNativeSelectGame, this);
         UpdateController.inst.addProgressCallback(this, (msg: string, progress: number) => {
-            this.Progress = progress == NaN ? 0 : progress;
+            console.log(" loading game progress:", progress);
+            this.Progress = progress;
         });
 
         let retryCount = 0;
