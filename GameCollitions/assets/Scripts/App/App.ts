@@ -21,6 +21,7 @@ export default class App extends cc.Component {
         this.VersionInfo.string = UpdateController.inst.getVersion();
         UpdateController.inst.addCompleteCallback((msg: string, needRestart: boolean) => {
 
+            console.log("App: update complete ...");
             if (needRestart == false) {
                 InitialFacade.inst.start();
             }
@@ -36,6 +37,7 @@ export default class App extends cc.Component {
     start() {
 
         UpdateController.inst.checkForUpdate();
+        //InitialFacade.inst.start();
 
     }
 

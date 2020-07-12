@@ -86,13 +86,13 @@ export class InitialFacade {
         (Date.now() - this.loadTime[commandName]).toFixed(2),
         "ms"
       );
-      // if (total === now) {
-      //   if (CelerSDK.inst.isOnCelerPlatform()) {
-      //     CelerSDK.inst.celerXReady();
-      //   } else {
-      //     this.facade.sendNotification(InitialFacade.START_UP, this);
-      //   }
-      // }
+      if (total === now) {
+        if (CelerSDK.inst.isOnCelerPlatform()) {
+          CelerSDK.inst.celerXReady();
+        } else {
+          this.facade.sendNotification(InitialFacade.START_UP, this);
+        }
+      }
     }
   }
 }

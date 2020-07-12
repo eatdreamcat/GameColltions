@@ -44,6 +44,9 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
     private isUpdating: boolean = false;
     private manifest: cc.Asset = null;
+    private isLoadGame: boolean = false;
+    private HomeKey: string = "home-page";
+    private GameKey: string = "select-game";
     private completeCallback: { target: any, callback: (msg: string, needRestart: boolean) => void }[] = [];
     private startCallback: { target: any, callback: (msg: string, go2AppStore: boolean) => void }[] = [];
     private errorCallback: { target: any, callback: (msg: string, canRetry: boolean) => void }[] = [];
@@ -116,6 +119,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         console.log(" on update complete:", this.getVersion());
         console.log("storagePath:", this.getStoragePath());
         console.log("search path:", this.getSearchPaths());
+        this.isUpdating = false;
         for (let method of this.completeCallback) {
             setTimeout(() => {
                 method.callback.apply(method.target, [msg, needRestart]);
@@ -159,8 +163,9 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
 
     /** 重新创建一个assetManager */
-    setCustomManifest(manifestStr: string, storagePath: string = this.STORAGE_PATH) {
+    setCustomManifest(manifestStr: string, storagePath: string = this.STORAGE_PATH, isLoadGame: boolean = true) {
 
+        this.isLoadGame = isLoadGame;
         this.assetsManager = null;
 
         this.assetsManager = new jsb.AssetsManager(this.MANIFEST_PAth, this.STORAGE_PATH, this.versionCompareHandle);
@@ -179,6 +184,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
     checkForUpdate() {
 
+        console.log("check for update");
 
         if (this.assetsManager == null) {
             this.onComplete("no need to update.")
@@ -186,7 +192,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         }
 
         if (this.isUpdating) {
-            return "Version update is on process...";
+            this.onError("Version update is on process...");
+            return;
         }
 
         console.log(" start check for update ...");
@@ -320,7 +327,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         let failed = false;
 
         let completeCallback = null;
-        console.log("update event code:", event.getEventCode());
+        // console.log("update event code:", event.getEventCode());
         switch (event.getEventCode()) {
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
                 this.onError('No local manifest file found, hot update skipped.')
@@ -347,7 +354,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
                 break;
             case jsb.EventAssetsManager.UPDATE_FINISHED:
                 completeCallback = () => {
-                    let newVersionStr = this.assetsManager.getRemoteManifest() ? this.assetsManager.getRemoteManifest().getVersion() : " null";
+                    let newVersionStr = this.assetsManager.getLocalManifest() ? this.assetsManager.getLocalManifest().getVersion() : " null";
                     this.onComplete('Update finished. new : ' + newVersionStr + event.getMessage(), true);
 
                 }
@@ -391,9 +398,19 @@ export default class UpdateController extends SingleTon<UpdateController>() {
             // This value will be retrieved and appended to the default search path during game startup,
             // please refer to samples/js-tests/main.js for detailed usage.
             // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
-            cc.sys.localStorage.setItem("home-page", JSON.stringify(searchPaths));
-            // 删除游戏的选择记录
-            cc.sys.localStorage.removeItem("select-game");
+
+
+            if (this.isLoadGame == false) {
+
+                // 删除游戏的选择记录
+                cc.sys.localStorage.setItem("HotUpdateSearchPaths", JSON.stringify(searchPaths));
+                cc.sys.localStorage.setItem(this.HomeKey, JSON.stringify(searchPaths));
+                cc.sys.localStorage.removeItem("select-game");
+            } else {
+
+
+                cc.sys.localStorage.setItem(this.GameKey, JSON.stringify(searchPaths));
+            }
 
             jsb.fileUtils.setSearchPaths(searchPaths);
             console.log("new searchPaths:", JSON.stringify(searchPaths));
@@ -406,6 +423,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     restart() {
+        console.log("restart");
         cc.audioEngine.stopAll();
         cc.game.restart();
     }

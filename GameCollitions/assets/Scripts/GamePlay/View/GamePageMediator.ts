@@ -25,6 +25,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
     onRegister() {
 
+        console.log("GamePageMediator onRegister ")
         this.WebView.on("error", this.onGameLoadFail, this);
         this.WebView.on("loaded", this.onGameLoadSuccess, this);
         this.WebView.on("loading", this.onGameLoadProgress, this);
@@ -32,7 +33,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         this.CloseButton.on(cc.Node.EventType.TOUCH_END, this.Close, this);
         this.RefreshButton.on(cc.Node.EventType.TOUCH_END, this.Refresh, this);
 
-        GameSelector.inst.onLoadNativeFail = this.startLoadGame;
+        GameSelector.inst.onLoadNativeFail = this.startLoadGame.bind(this);
         // LoadGameSignal.inst.addListenerTwo(this.startLoadGame, this);
     }
 
@@ -41,7 +42,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         if (this.webViewNode == null || cc.isValid(this.webViewNode, true) == false) return;
         let webView = this.webViewNode.getComponent(cc.WebView);
         if (webView) {
-            webView.url = webView.url + Date.now();
+            webView.url = webView.url.split("?")[0] + Date.now();
         }
     }
 
@@ -56,12 +57,16 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     }
 
     startLoadGame(name: string, special: boolean) {
-        console.log(" load game:", name, ", special:", special);
+
+        if (cc.sys.WIN32 == cc.sys.platform) return;
+
+
+        console.log(" load game in webview:", name, ", special:", special);
 
         let gameUrl = special ? GameConfig.inst.Config.specialPath : GameConfig.inst.Config.normalPath;
         this.WebView.active = true;
-        this.WebView.width = cc.director.getWinSize().width;
-        this.WebView.height = cc.director.getWinSize().height;
+        this.WebView.width = cc.view.getFrameSize().width;
+        this.WebView.height = cc.view.getFrameSize().height;
         if (this.webViewNode != null && this.webViewNode.destroy) {
             this.webViewNode.destroy();
         }

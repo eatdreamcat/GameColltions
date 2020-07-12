@@ -16,15 +16,19 @@ export default class BaseView extends cc.Component {
 
     onLoad() {
         this.node.scale = 0;
-
     }
 
     Show() {
-        this.node.runAction(cc.scaleTo(0.1, 1))
+        this.node.active = true;
+        this.node.runAction(cc.sequence(cc.callFunc(() => {
+
+        }), cc.scaleTo(0.1, 1)))
     }
 
     Hide() {
-        this.node.runAction(cc.scaleTo(0.1, 0));
+        this.node.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+            this.node.active = false;
+        })));
     }
 
     OnClick() {

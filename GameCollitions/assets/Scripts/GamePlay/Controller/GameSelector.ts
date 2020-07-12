@@ -46,20 +46,29 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     }
 
 
+    private name: string = "";
+    private special: boolean = false;
     onLoadNativeFail(name: string, special: boolean) { }
+
+    onStartLoadGame() {
+
+    }
 
     onGameSelector(name: string, special: boolean) {
         console.log(" select game: ", name, ", is special version:", special);
+
+        this.name = name;
+        this.special = special;
         this.gameName = name + "-" + (special ? "Special" : "Normal");
         if (window["jsb"]) {
             this.selectGameOnJsb();
         } else {
-            this.selectGameOnWeb(name, special);
+            this.selectGameOnWeb();
         }
     }
 
-    private selectGameOnWeb(name: string, special: boolean) {
-        this.onLoadNativeFail(name, special);
+    private selectGameOnWeb() {
+        this.onLoadNativeFail(this.name, this.special);
     }
 
     private selectGameOnJsb() {
@@ -67,14 +76,15 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
         this.Msg = "加载游戏中...";
         this.Progress = 0;
-
+        GameSelector.inst.onStartLoadGame();
         if (jsb.fileUtils.isFileExist(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest")) {
             console.log("  找到 manifest 缓存");
             let manifestStr = jsb.fileUtils.getStringFromFile(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest");
             UpdateController.inst.setCustomManifest(manifestStr, jsb.fileUtils.getWritablePath() + this.gameName);
+            this.startLoadGame();
 
         } else {
-            Downloader.DownloadText("https://vicat.wang/Remote-Hot-Update/" + this.gameName + "/project.manifest", this.onDownloadManifestComplete.bind(this), (progress: number, loaded: number, total: number) => {
+            Downloader.DownloadText("https://vicat.wang/Remote-Hot-Update/" + this.gameName + "/project.manifest.old", this.onDownloadManifestComplete.bind(this), (progress: number, loaded: number, total: number) => {
 
                 this.Msg = "首次初始化游戏可能耗时较长，如果您不想等，那就别玩了😕...";
                 this.Progress = progress;
@@ -86,6 +96,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         if (err) {
             console.error(err);
             this.Msg = "加载出错了，退下吧";
+            this.onLoadNativeFail(this.name, this.special);
         } else {
             UpdateController.inst.setCustomManifest(text, jsb.fileUtils.getWritablePath() + this.gameName);
             let fullPath = jsb.fileUtils.getWritablePath() + this.gameName + "/";
@@ -96,26 +107,40 @@ export default class GameSelector extends SingleTon<GameSelector>() {
                 console.log(this.gameName + " manifest write fail...")
             }
 
-            this.Msg = "正在检测游戏更新...";
-            this.Progress = 0;
-            UpdateController.inst.clearAllCallbacks();
-            UpdateController.inst.addCompleteCallback(this.doNativeSelectGame, this);
-            UpdateController.inst.addProgressCallback(this, (msg: string, progress: number) => {
-                this.Progress = progress == NaN ? 0 : progress;
-            });
-
-            let retryCount = 0;
-            UpdateController.inst.addErrorCallback(this, (msg: string, canRetry: boolean) => {
-
-                UpdateController.inst.restart();
-
-            });
-            UpdateController.inst.checkForUpdate();
+            this.startLoadGame();
         }
+
+
+    }
+
+
+    private startLoadGame() {
+        this.Msg = "正在检测游戏更新...";
+        this.Progress = 0;
+        UpdateController.inst.clearAllCallbacks();
+        UpdateController.inst.addCompleteCallback(this.doNativeSelectGame, this);
+        UpdateController.inst.addProgressCallback(this, (msg: string, progress: number) => {
+            this.Progress = progress == NaN ? 0 : progress;
+        });
+
+        let retryCount = 0;
+        UpdateController.inst.addErrorCallback(this, (msg: string, canRetry: boolean) => {
+
+            UpdateController.inst.restart();
+
+        });
+
+        UpdateController.inst.addStartCallback(this, (msg: string, go2Store: boolean) => {
+            console.log("start loading game:", msg);
+
+        });
+
+        UpdateController.inst.checkForUpdate();
     }
 
     private doNativeSelectGame(msg: string, needRestart: boolean) {
         // 记录一下要进游戏
+        console.log(" 游戏加载成功");
         UpdateController.inst.restart();
     }
 }

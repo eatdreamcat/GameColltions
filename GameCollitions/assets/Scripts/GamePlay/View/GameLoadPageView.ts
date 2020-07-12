@@ -33,8 +33,15 @@ export default class GameLoadPageView extends BaseView {
 
     onLoad() {
         super.onLoad();
+        this.Hide();
         this.Bar.x = this.StartX;
-        LoadGameSignal.inst.addListener(this.Show, this);
+        GameSelector.inst.onStartLoadGame = this.Show.bind(this);
+    }
+
+
+    Show() {
+        console.log(" show loading page ...");
+        super.Show();
     }
 
     start() {

@@ -46,6 +46,7 @@ export default class LoadingView extends BaseView {
 
 
         UpdateController.inst.addCompleteCallback((msg: string) => {
+            console.log("LoadingView: update complete ...");
             this.Progress.runAction(cc.fadeIn(0.3));
 
         }, this);

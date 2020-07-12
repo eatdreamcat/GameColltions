@@ -47,6 +47,7 @@ export default class UpdateView extends BaseView {
 
 
     Hide() {
+        console.log(" update view hide:", this.node.active);
         this.node.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
             this.node.active = false;
         })));
@@ -67,7 +68,7 @@ export default class UpdateView extends BaseView {
     }
 
     onComplete(msg: string, needRestart: boolean) {
-        console.log(" update complete:", msg)
+        console.log(" update complete:", msg, needRestart);
         if (needRestart) {
 
             this.showButton("Restart", UpdateController.inst.restart)
@@ -82,12 +83,28 @@ export default class UpdateView extends BaseView {
         this.RestartButton.stopAllActions();
         this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(() => {
 
-            this.RestartButton.on(cc.Node.EventType.TOUCH_END, () => {
-                callback();
-                this.RestartButton.targetOff(this);
-                this.RestartButton.runAction(cc.scaleTo(0.1, 0))
-            }, this)
-        })))
+            console.log("register button event")
+            if (cc.sys.WIN32 == cc.sys.platform) {
+                this.RestartButton.on(cc.Node.EventType.MOUSE_DOWN, () => {
+
+                    console.log("restart")
+                    this.RestartButton.targetOff(this);
+                    this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+                        callback();
+                    })));
+                }, this);
+            } else {
+                this.RestartButton.on(cc.Node.EventType.TOUCH_END, () => {
+
+                    console.log("restart")
+                    this.RestartButton.targetOff(this);
+                    this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+                        callback();
+                    })));
+                }, this);
+            }
+
+        })));
     }
 
     onError(msg: string, canRetry: boolean) {
