@@ -76,6 +76,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
         this.Msg = "加载游戏中...";
         this.Progress = 0;
+        let self = this;
         GameSelector.inst.onStartLoadGame();
         if (jsb.fileUtils.isFileExist(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest")) {
             console.log("  找到 manifest 缓存");
@@ -86,8 +87,8 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         } else {
             Downloader.DownloadText("https://vicat.wang/Remote-Hot-Update/" + this.gameName + "/project.manifest.old", this.onDownloadManifestComplete.bind(this), (progress: number, loaded: number, total: number) => {
 
-                this.Msg = "首次初始化游戏可能耗时较长，如果您不想等，那就别玩了😕...";
-                this.Progress = progress;
+                self.Msg = "首次初始化游戏可能耗时较长，如果您不想等，那就别玩了😕...";
+                self.Progress = progress;
             });
         }
     }
@@ -132,7 +133,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
         UpdateController.inst.addStartCallback(this, (msg: string, go2Store: boolean) => {
             console.log("start loading game:", msg);
-
+            this.Msg = "游戏更新中...";
         });
 
         UpdateController.inst.checkForUpdate();
@@ -141,6 +142,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     private doNativeSelectGame(msg: string, needRestart: boolean) {
         // 记录一下要进游戏
         console.log(" 游戏加载成功");
+
         UpdateController.inst.restart();
     }
 }

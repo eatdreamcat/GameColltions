@@ -45,8 +45,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     private isUpdating: boolean = false;
     private manifest: cc.Asset = null;
     private isLoadGame: boolean = false;
-    private HomeKey: string = "home-page";
-    private GameKey: string = "select-game";
+    public HomeKey: string = "home-page";
+    public GameKey: string = "select-game";
     private completeCallback: { target: any, callback: (msg: string, needRestart: boolean) => void }[] = [];
     private startCallback: { target: any, callback: (msg: string, go2AppStore: boolean) => void }[] = [];
     private errorCallback: { target: any, callback: (msg: string, canRetry: boolean) => void }[] = [];
@@ -382,48 +382,54 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         if (needRestart) {
             this.assetsManager.setEventCallback(null);
 
-            // Prepend the manifest's search path
-            let searchPaths = jsb.fileUtils.getSearchPaths();
-            console.log("old searchPaths:", searchPaths)
-            let newPaths = this.assetsManager.getLocalManifest().getSearchPaths();
-            //newPaths[0] = newPaths[0] + ("v" + this.getVersion() + "/")
-            console.log("new path:", JSON.stringify(newPaths));
-            for (let path of newPaths) {
-                if (searchPaths.indexOf(path) < 0) {
-                    Array.prototype.unshift.apply(searchPaths, path);
-                }
+            this.applyPaths();
+
+            if (completeCallback) {
+
+                completeCallback();
             }
-
-
-            // This value will be retrieved and appended to the default search path during game startup,
-            // please refer to samples/js-tests/main.js for detailed usage.
-            // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
-
-
-            if (this.isLoadGame == false) {
-
-                // 删除游戏的选择记录
-                cc.sys.localStorage.setItem("HotUpdateSearchPaths", JSON.stringify(searchPaths));
-                cc.sys.localStorage.setItem(this.HomeKey, JSON.stringify(searchPaths));
-                cc.sys.localStorage.removeItem("select-game");
-            } else {
-
-
-                cc.sys.localStorage.setItem(this.GameKey, JSON.stringify(searchPaths));
-            }
-
-            jsb.fileUtils.setSearchPaths(searchPaths);
-            console.log("new searchPaths:", JSON.stringify(searchPaths));
-        }
-
-        if (completeCallback) {
-
-            completeCallback();
         }
     }
 
+    applyPaths() {
+        // Prepend the manifest's search path
+        let searchPaths = jsb.fileUtils.getSearchPaths();
+        console.log("old searchPaths:", searchPaths)
+        let newPaths = this.assetsManager.getLocalManifest().getSearchPaths();
+        //newPaths[0] = newPaths[0] + ("v" + this.getVersion() + "/")
+        console.log("new path:", JSON.stringify(newPaths));
+        for (let path of newPaths) {
+            if (searchPaths.indexOf(path) < 0) {
+                Array.prototype.unshift.apply(searchPaths, path);
+            }
+        }
+
+
+        // This value will be retrieved and appended to the default search path during game startup,
+        // please refer to samples/js-tests/main.js for detailed usage.
+        // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
+
+
+        if (this.isLoadGame == false) {
+
+            // 删除游戏的选择记录
+            //  cc.sys.localStorage.setItem("HotUpdateSearchPaths", JSON.stringify(searchPaths));
+            cc.sys.localStorage.setItem(this.HomeKey, JSON.stringify(searchPaths));
+            cc.sys.localStorage.removeItem(this.GameKey);
+        } else {
+
+
+            cc.sys.localStorage.setItem(this.GameKey, JSON.stringify(searchPaths));
+        }
+
+        jsb.fileUtils.setSearchPaths(searchPaths);
+        console.log("new searchPaths:", JSON.stringify(searchPaths));
+    }
+
+
     restart() {
         console.log("restart");
+        this.applyPaths();
         cc.audioEngine.stopAll();
         cc.game.restart();
     }

@@ -47,17 +47,17 @@ export class LogHandler extends SingleTon<LogHandler>() {
     console.log(" --- init log ---");
 
     this.logFunc = callback;
-    console.error = function (...args) {
-      LogHandler.inst.log("[ERROR]", ...args);
-    };
+    // console.error = function (...args) {
+    //   LogHandler.inst.log("[ERROR]", ...args);
+    // };
 
-    console.warn = function (...args) {
-      LogHandler.inst.log("[WARN]", ...args);
-    };
+    // console.warn = function (...args) {
+    //   LogHandler.inst.log("[WARN]", ...args);
+    // };
 
-    console.log = function (...args) {
-      LogHandler.inst.log("[INFO]", ...args);
-    };
+    // console.log = function (...args) {
+    //   LogHandler.inst.log("[INFO]", ...args);
+    // };
   }
 
   formatLogArguments(..._) {
