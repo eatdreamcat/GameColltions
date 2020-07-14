@@ -135,6 +135,14 @@ export default class UpdateController extends SingleTon<UpdateController>() {
         return window["jsb"] ? jsb.fileUtils.getSearchPaths() : ""
     }
 
+    public getFilesCount() {
+        return this.assetsManager ? this.assetsManager.getTotalFiles() : 0;
+    }
+
+    public getTotalBytes() {
+        return this.assetsManager ? this.assetsManager.getTotalBytes() : 0;
+    }
+
     private onStart(msg: string, go2AppStore: boolean = false) {
         console.log(" this.startCallback:", this.startCallback.length)
         for (let method of this.startCallback) {
@@ -420,7 +428,16 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
 
             cc.sys.localStorage.setItem(this.GameKey, JSON.stringify(searchPaths));
+            cc.sys.localStorage.removeItem("in-game");
         }
+
+        if (!cc.sys.localStorage.getItem(this.HomeKey)) {
+            console.log("app没有更新过，初始化一下home-page");
+            cc.sys.localStorage.setItem(this.HomeKey, JSON.stringify(["@assets/"]));
+        }
+        console.log("isloadgame:", this.isLoadGame);
+        console.log("home ：", cc.sys.localStorage.getItem(this.HomeKey));
+        console.log("game :", cc.sys.localStorage.getItem("select-game"));
 
         jsb.fileUtils.setSearchPaths(searchPaths);
         console.log("new searchPaths:", JSON.stringify(searchPaths));

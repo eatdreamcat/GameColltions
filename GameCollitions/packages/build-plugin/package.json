@@ -1,0 +1,7 @@
+{
+  "name": "build-plugin",
+  "version": "1.0.0",
+  "description": "用于热更新插件以及celerxSDK自动接入",
+  "author": "chichi",
+  "main": "main.js"
+}

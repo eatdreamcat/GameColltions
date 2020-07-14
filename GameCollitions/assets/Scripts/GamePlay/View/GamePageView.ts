@@ -19,8 +19,8 @@ const { ccclass, property } = cc._decorator;
 export default class GamePageView extends BaseView {
 
 
-    get BlockEvent() {
-        return this.getComponent(cc.BlockInputEvents)
+    get Block() {
+        return this.node.getChildByName("Block")
     }
 
 
@@ -28,18 +28,25 @@ export default class GamePageView extends BaseView {
     onLoad() {
         console.log(" Game PageView Onload ")
         super.onLoad();
-        this.BindMedaitor(GamePageMediator)
-        this.BlockEvent.enabled = false;
+        this.BindMedaitor(GamePageMediator);
+
+        this.Block.active = false;
+
+        setTimeout(() => {
+            this.node.active = false;
+        }, 0);
 
     }
 
     Show() {
         super.Show();
-        this.BlockEvent.enabled = true;
+        this.Block.active = true;
+
     }
 
     Hide() {
         super.Hide();
-        this.BlockEvent.enabled = false;
+        this.Block.active = false;
+
     }
 }

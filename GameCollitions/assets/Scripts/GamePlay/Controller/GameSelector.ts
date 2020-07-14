@@ -48,11 +48,65 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
     private name: string = "";
     private special: boolean = false;
-    onLoadNativeFail(name: string, special: boolean) { }
 
-    onStartLoadGame() {
+    private failCallback: {
+        target: any,
+        callback: (name: string, special: boolean) => void
+    }[] = [];
 
+    private startCallback: {
+        target: any,
+        callback: (name?: string) => void
+    }[] = [];
+
+    private completeCallback: {
+        target: any,
+        callback: (name: string) => void
+    }[] = [];
+
+    private onLoadNativeFail(name: string, special: boolean) {
+        for (let listener of this.failCallback) {
+            listener.callback.apply(listener.target, [name, special])
+        }
     }
+
+    addFailListener(callback: (name: string, special: boolean) => void, target: any) {
+        this.failCallback.push({
+            target: target,
+            callback: callback
+        })
+    }
+
+    addStartListener(callback: (name?: string) => void, target: any) {
+        this.startCallback.push({
+            target: target,
+            callback: callback
+        })
+    }
+
+
+    private onStartLoadGame() {
+        for (let listener of this.startCallback) {
+            listener.callback.apply(listener.target, [this.name])
+        }
+    }
+
+    addCompleteListener(callback: (name: string) => void, target: any) {
+        this.completeCallback.push({
+            target: target,
+            callback: callback
+        })
+    }
+
+
+    private onCompleteLoadGame() {
+        for (let listener of this.completeCallback) {
+            listener.callback.apply(listener.target, [this.name])
+        }
+    }
+
+
+
 
     onGameSelector(name: string, special: boolean) {
         console.log(" select game: ", name, ", is special version:", special);
@@ -81,10 +135,12 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         if (jsb.fileUtils.isFileExist(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest")) {
             console.log("  找到 manifest 缓存");
             let manifestStr = jsb.fileUtils.getStringFromFile(jsb.fileUtils.getWritablePath() + this.gameName + "/project.manifest");
-            UpdateController.inst.setCustomManifest(manifestStr, jsb.fileUtils.getWritablePath() + this.gameName);
+            UpdateController.inst.setCustomManifest(manifestStr, jsb.fileUtils.getWritablePath() + this.gameName, true);
             this.startLoadGame();
 
         } else {
+
+            this.isFirstLoad = true;
             Downloader.DownloadText("https://vicat.wang/Remote-Hot-Update/" + this.gameName + "/project.manifest.old", this.onDownloadManifestComplete.bind(this), (progress: number, loaded: number, total: number) => {
 
                 self.Msg = "首次初始化游戏可能耗时较长，如果您不想等，那就别玩了😕...";
@@ -99,7 +155,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
             this.Msg = "加载出错了，退下吧";
             this.onLoadNativeFail(this.name, this.special);
         } else {
-            UpdateController.inst.setCustomManifest(text, jsb.fileUtils.getWritablePath() + this.gameName);
+            UpdateController.inst.setCustomManifest(text, jsb.fileUtils.getWritablePath() + this.gameName, true);
             let fullPath = jsb.fileUtils.getWritablePath() + this.gameName + "/";
             console.log("fullPath:", fullPath);
             if ((jsb.fileUtils.isDirectoryExist(fullPath) || jsb.fileUtils.createDirectory(fullPath)) && jsb.fileUtils.writeStringToFile(text, fullPath + "/project.manifest")) {
@@ -115,6 +171,9 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     }
 
 
+    private isFirstLoad = false;
+    private filesCount: number = 0;
+    private totalBytes: number = 0;
     private startLoadGame() {
         this.Msg = "正在检测游戏更新...";
         this.Progress = 0;
@@ -122,20 +181,24 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         UpdateController.inst.addCompleteCallback(this.doNativeSelectGame, this);
         let self = this;
         UpdateController.inst.addProgressCallback(this, (msg: string, progress: number) => {
-            console.log(" loading game progress:", progress, self.Progress, this.Progress);
+
             this.Progress = progress;
+            if (isNaN(this.Progress)) this.Progress = 0;
         });
 
         let retryCount = 0;
         UpdateController.inst.addErrorCallback(this, (msg: string, canRetry: boolean) => {
 
-            UpdateController.inst.restart();
+            this.onLoadNativeFail(this.name, this.special);
 
         });
 
         UpdateController.inst.addStartCallback(this, (msg: string, go2Store: boolean) => {
             console.log("start loading game:", msg);
-            this.Msg = "游戏更新中...";
+            this.filesCount = UpdateController.inst.getFilesCount();
+            this.totalBytes = UpdateController.inst.getTotalBytes();
+            console.log("filesCount:", this.filesCount, ",totalBytes:", this.totalBytes)
+            this.Msg = this.isFirstLoad ? "首次初始化游戏可能耗时较长，如果您不想等，那就别玩了🙄..." : "游戏更新中🤑...";
         });
 
         UpdateController.inst.checkForUpdate();
@@ -144,7 +207,8 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     private doNativeSelectGame(msg: string, needRestart: boolean) {
         // 记录一下要进游戏
         console.log(" 游戏加载成功");
-
-        UpdateController.inst.restart();
+        this.Msg = "游戏加载成功";
+        this.Progress = 1;
+        this.onCompleteLoadGame();
     }
 }

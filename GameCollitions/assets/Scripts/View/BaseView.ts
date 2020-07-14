@@ -18,6 +18,7 @@ export default class BaseView extends cc.Component {
         this.node.scale = 0;
     }
 
+
     Show() {
         this.node.active = true;
         this.node.runAction(cc.sequence(cc.callFunc(() => {

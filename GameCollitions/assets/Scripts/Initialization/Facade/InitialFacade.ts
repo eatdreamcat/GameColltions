@@ -26,7 +26,7 @@ export class InitialFacade {
   }
 
   get Facade() {
-    console.assert(this.facade == null, " facade is null");
+    console.assert(this.facade !== null, " facade is null");
     return this.facade;
   }
 
