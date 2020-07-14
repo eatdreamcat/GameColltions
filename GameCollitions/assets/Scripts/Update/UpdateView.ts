@@ -81,7 +81,7 @@ export default class UpdateView extends BaseView {
     showButton(title: string, callback: () => void) {
         this.ButtonTitle.string = title;
         this.RestartButton.stopAllActions();
-        this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(() => {
+        this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 1.2), cc.scaleTo(0.1, 1), cc.callFunc(() => {
 
             console.log("register button event")
             if (cc.sys.WIN32 == cc.sys.platform) {
@@ -90,9 +90,12 @@ export default class UpdateView extends BaseView {
                     console.log("restart")
                     this.RestartButton.targetOff(this);
                     this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
-                        setTimeout(() => {
-                            callback();
-                        }, 300);
+                        this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+                            this.RestartButton.active = false;
+                            setTimeout(() => {
+                                callback();
+                            }, 500);
+                        })));
                     })));
                 }, this);
             } else {
@@ -101,9 +104,12 @@ export default class UpdateView extends BaseView {
                     console.log("restart")
                     this.RestartButton.targetOff(this);
                     this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
-                        setTimeout(() => {
-                            callback();
-                        }, 300);
+                        this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+                            this.RestartButton.active = false;
+                            setTimeout(() => {
+                                callback();
+                            }, 500);
+                        })));
                     })));
                 }, this);
             }
