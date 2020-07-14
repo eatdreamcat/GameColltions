@@ -39,7 +39,7 @@ export default class GamePageView extends BaseView {
     }
 
     Show() {
-        super.Show();
+        this.node.scale = 1;
         this.Block.active = true;
 
     }

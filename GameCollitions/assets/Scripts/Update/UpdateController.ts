@@ -24,6 +24,10 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
     private init() {
         if (window["jsb"]) {
+            if (!cc.sys.localStorage.getItem(this.HomeKey)) {
+                console.log("app没有更新过，初始化一下home-page");
+                cc.sys.localStorage.setItem(this.HomeKey, JSON.stringify(["@assets/"]));
+            }
             this.assetsManager = new jsb.AssetsManager(this.MANIFEST_PAth, this.STORAGE_PATH, this.versionCompareHandle);
             this.assetsManager.setVerifyCallback(this.verifyCallback.bind(this));
             if (cc.sys.os === cc.sys.OS_ANDROID) {
@@ -191,6 +195,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     checkForUpdate() {
+
+
 
         console.log("check for update");
 

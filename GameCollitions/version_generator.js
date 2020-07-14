@@ -16,7 +16,7 @@ var manifest = {
 
 var dest = './remote-assets/';
 var src = './jsb/';
-
+var versionNameMatch = "";
 // Parse arguments
 var i = 2;
 while (i < process.argv.length) {
@@ -33,7 +33,7 @@ while (i < process.argv.length) {
             break;
         case '--version':
         case '-v':
-            manifest.version = process.argv[i + 1];
+            versionNameMatch = "-" + process.argv[i + 1];
             i += 2;
             break;
         case '--src':
@@ -99,14 +99,15 @@ let mkdirSync = function (path) {
 // 生成版本号
 let generatedVersion = function () {
 
+
     let version = 100;
-    if (fs.existsSync("./version")) {
-        version = fs.readFileSync("./version").toString();
+    if (fs.existsSync("./version" + versionNameMatch)) {
+        version = fs.readFileSync("./version" + versionNameMatch).toString();
     }
 
     let newVersion = version2str(version2Int(version) + 1)
-    console.log("old version:", version, ", new version:", newVersion);
-    fs.writeFileSync("./version", newVersion);
+    console.log("old version " + versionNameMatch + ":", version, ", new version " + versionNameMatch + ":", newVersion);
+    fs.writeFileSync("./version" + versionNameMatch, newVersion);
     manifest.version = newVersion;
 }
 
@@ -200,11 +201,12 @@ let copyAssets = function (from, dest) {
 
 
 // 1.拷贝资源
-copyAssets("./build/jsb-link/", "./hot-update/");
+copyAssets("./build/jsb-link/", src);
 
 // 2. 更新版本信息
 
 generatedVersion();
+
 //3. 根据资源路径生成manifest
 readDir(path.join(src, '/src'), manifest.assets);
 readDir(path.join(src, '/res'), manifest.assets);
@@ -216,12 +218,15 @@ mkdirSync(dest);
 
 fs.writeFile(destManifest, JSON.stringify(manifest), (err) => {
     if (err) throw err;
+    fs.copyFileSync(destManifest, path.join("./hot-update/", 'project.manifest'));
     console.log('Manifest successfully generated');
+
 });
 
 delete manifest.assets;
 delete manifest.searchPaths;
 fs.writeFile(destVersion, JSON.stringify(manifest), (err) => {
     if (err) throw err;
+    fs.copyFileSync(destVersion, path.join("./hot-update/", 'version.manifest'));
     console.log('Version successfully generated');
 });
