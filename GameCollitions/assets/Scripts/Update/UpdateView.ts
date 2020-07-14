@@ -90,7 +90,9 @@ export default class UpdateView extends BaseView {
                     console.log("restart")
                     this.RestartButton.targetOff(this);
                     this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
-                        callback();
+                        setTimeout(() => {
+                            callback();
+                        }, 300);
                     })));
                 }, this);
             } else {
@@ -99,7 +101,9 @@ export default class UpdateView extends BaseView {
                     console.log("restart")
                     this.RestartButton.targetOff(this);
                     this.RestartButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
-                        callback();
+                        setTimeout(() => {
+                            callback();
+                        }, 300);
                     })));
                 }, this);
             }
