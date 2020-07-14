@@ -71,7 +71,9 @@ export default class UpdateView extends BaseView {
         console.log(" update complete:", msg, needRestart);
         if (needRestart) {
 
-            this.showButton("Restart", UpdateController.inst.restart)
+            this.showButton("Restart", () => {
+                UpdateController.inst.restart();
+            });
         } else {
             this.Hide();
 
