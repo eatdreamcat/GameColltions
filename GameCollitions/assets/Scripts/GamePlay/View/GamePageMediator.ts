@@ -40,6 +40,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     private startPos = null;
     onRegister() {
 
+
+        celerSDK.onBackPressed(this.Close.bind(this));
         this.HideDialog();
 
 
@@ -98,10 +100,17 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     }
 
     Close() {
+        if (this.WebView.active == false) return;
+        if (window["jsb"] && this.webViewNode && this.webViewNode.getComponent) {
+            let webView = this.webViewNode.getComponent(cc.WebView);
+            webView && webView.evaluateJS("if (cc.audioEngine) cc.audioEngine.stopAll();")
+        }
         this.WebView.active = false;
-        this.webViewNode.removeComponent(cc.WebView);
-        this.webViewNode.destroy();
-        this.webViewNode = null;
+        if (this.webViewNode && this.webViewNode.removeComponent) {
+            this.webViewNode.removeComponent(cc.WebView);
+            this.webViewNode.destroy();
+            this.webViewNode = null;
+        }
         this.View.Hide();
         this.CloseButton.active = false;
         this.RefreshButton.active = false;
@@ -112,7 +121,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     startLoadGame(name: string, special: boolean) {
 
 
-        console.error(cc.view.getFrameSize())
+        console.error(cc.view.getFrameSize());
         if (cc.sys.WIN32 == cc.sys.platform) return;
 
 

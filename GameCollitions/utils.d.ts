@@ -18,6 +18,7 @@ declare class celerSDK {
     public static provideCurrentFrameData(callback: Function): void;
     public static didTakeSnapshot(imageData: string): void;
     public static log(msg: string): void;
+    public static onBackPressed(callback: Function)
 }
 
 interface MatchInfo {
