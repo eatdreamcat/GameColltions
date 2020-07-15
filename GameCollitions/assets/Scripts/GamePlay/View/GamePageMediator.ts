@@ -21,17 +21,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         return this.node.getChildByName("Refresh")
     }
 
-    get Dialog() {
-        return this.node.getChildByName("Dialog")
-    }
 
-    get DialogYes() {
-        return this.Dialog.getChildByName("Yes");
-    }
-
-    get DialogNo() {
-        return this.Dialog.getChildByName("No");
-    }
 
     private webViewNode: cc.Node;
 
@@ -41,13 +31,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     onRegister() {
 
         LoadGameSignal.inst.addListenerTwo<string, boolean>(this.startLoadGame, this);
-        celerSDK.onBackPressed(this.Close.bind(this));
-        this.HideDialog();
+        CELER_X && celerSDK.onBackPressed(this.Close.bind(this));
 
-
-        this.DialogYes.on(cc.Node.EventType.TOUCH_END, this.leaveGame, this);
-
-        this.DialogYes.on(cc.Node.EventType.TOUCH_END, this.HideDialog, this);
 
         console.log("GamePageMediator onRegister ");
         this.WebView.on("error", this.onGameLoadFail, this);
@@ -55,41 +40,12 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         this.WebView.on("loading", this.onGameLoadProgress, this);
         this.RefreshButton.on(cc.Node.EventType.TOUCH_END, this.Refresh, this);
 
-        GameSelector.inst.addFailListener(this.startLoadGame, this);
-        // LoadGameSignal.inst.addListenerTwo(this.startLoadGame, this);
+
+
     }
 
-    ShowDialog() {
-        if (this.Dialog.active) return;
-        this.Dialog.active = true;
-        this.Dialog.runAction(cc.sequence(
-            cc.scaleTo(0.1, 1),
-            cc.callFunc(() => {
 
 
-
-            })
-        ))
-    }
-
-    HideDialog(callback?: () => void) {
-        if (this.Dialog.active == false) return;
-        console.log("hideDialog");
-        this.Dialog.runAction(cc.sequence(
-            cc.scaleTo(0.1, 0),
-            cc.callFunc(() => {
-                if (callback) callback();
-                this.Dialog.active = false;
-
-            })
-        ))
-    }
-
-    leaveGame() {
-        this.HideDialog(() => {
-            this.Close();
-        })
-    }
 
     Refresh() {
         if (this.webViewNode == null || cc.isValid(this.webViewNode, true) == false) return;

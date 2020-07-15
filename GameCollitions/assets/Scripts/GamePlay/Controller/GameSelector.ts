@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { SingleTon } from "../../Utils/ToSingleton";
-import { LoadGameSignal } from "../Command/LoadGameSignal";
+import { LoadGameSignal, LoadNativeGameSignal } from "../Command/LoadGameSignal";
 import UpdateController from "../../Update/UpdateController";
 import Downloader from "../../Utils/Downloader";
 
@@ -25,7 +25,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     private progress: number = 0;
     private msg: string = "";
     public init() {
-        // LoadGameSignal.inst.addListenerTwo<string, boolean>(this.onGameSelector, this);
+        LoadNativeGameSignal.inst.addListenerOne<string>(this.onGameSelector, this);
 
     }
 
@@ -47,11 +47,10 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
 
     private name: string = "";
-    private special: boolean = false;
 
     private failCallback: {
         target: any,
-        callback: (name: string, special: boolean) => void
+        callback: (name: string) => void
     }[] = [];
 
     private startCallback: {
@@ -64,13 +63,13 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         callback: (name: string) => void
     }[] = [];
 
-    private onLoadNativeFail(name: string, special: boolean) {
+    private onLoadNativeFail(name: string) {
         for (let listener of this.failCallback) {
-            listener.callback.apply(listener.target, [name, special])
+            listener.callback.apply(listener.target)
         }
     }
 
-    addFailListener(callback: (name: string, special: boolean) => void, target: any) {
+    addFailListener(callback: (name: string) => void, target: any) {
         this.failCallback.push({
             target: target,
             callback: callback
@@ -108,12 +107,11 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
 
 
-    onGameSelector(name: string, special: boolean) {
-        console.log(" select game: ", name, ", is special version:", special);
+    onGameSelector(name: string) {
+        console.log(" select game: ", name);
 
         this.name = name;
-        this.special = special;
-        this.gameName = name + "-" + (special ? "Special" : "Normal");
+        this.gameName = name;
         if (window["jsb"]) {
             this.selectGameOnJsb();
         } else {
@@ -122,7 +120,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     }
 
     private selectGameOnWeb() {
-        this.onLoadNativeFail(this.name, this.special);
+        this.onLoadNativeFail(this.name);
     }
 
     private selectGameOnJsb() {
@@ -153,7 +151,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         if (err) {
             console.error(JSON.stringify(err));
             this.Msg = "加载出错了，退下吧";
-            this.onLoadNativeFail(this.name, this.special);
+            this.onLoadNativeFail(this.name);
         } else {
             UpdateController.inst.setCustomManifest(text, jsb.fileUtils.getWritablePath() + this.gameName, true);
             let fullPath = jsb.fileUtils.getWritablePath() + this.gameName + "/";
@@ -189,7 +187,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
         let retryCount = 0;
         UpdateController.inst.addErrorCallback(this, (msg: string, canRetry: boolean) => {
 
-            this.onLoadNativeFail(this.name, this.special);
+            this.onLoadNativeFail(this.name);
 
         });
 

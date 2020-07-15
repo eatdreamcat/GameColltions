@@ -12,14 +12,16 @@
 import { GameListMediator } from "./GameListMediator";
 import BaseView from "../../View/BaseView";
 import { GameConfig } from "../../Global/GameConfig";
-import { LoadGameSignal } from "../Command/LoadGameSignal";
+import { LoadGameSignal, LoadNativeGameSignal } from "../Command/LoadGameSignal";
+import { networkInterfaces } from "os";
 
 const { ccclass, property } = cc._decorator;
 
 
 enum Type {
     Normal,
-    Special
+    Special,
+    Native
 }
 @ccclass
 export default class GameListView extends BaseView {
@@ -77,6 +79,25 @@ export default class GameListView extends BaseView {
 
         }, this);
 
+        this.NativeNode.on(cc.Node.EventType.TOUCH_START, () => {
+
+            this.Native.color = this.SELECTED_COLOR;
+        }, this);
+
+        this.NativeNode.on(cc.Node.EventType.TOUCH_END, () => {
+
+            this.type = Type.Native;
+            this.updateType();
+            this.reFreshItems();
+        }, this);
+
+        this.NativeNode.on(cc.Node.EventType.TOUCH_CANCEL, () => {
+
+            this.updateType();
+
+        }, this);
+
+
 
 
 
@@ -92,13 +113,28 @@ export default class GameListView extends BaseView {
     }
 
     updateType() {
-        if (this.type == Type.Special) {
-            this.Special.color = this.SELECTED_COLOR;
-            this.Normal.color = cc.Color.WHITE;
-        } else {
-            this.Special.color = cc.Color.WHITE;
-            this.Normal.color = this.SELECTED_COLOR;
+
+        switch (this.type) {
+            case Type.Special:
+                this.Special.color = this.SELECTED_COLOR;
+                this.Normal.color = cc.Color.WHITE;
+                this.Native.color = cc.Color.WHITE;
+                break;
+            case Type.Normal:
+                this.Special.color = cc.Color.WHITE;
+                this.Native.color = cc.Color.WHITE;
+                this.Normal.color = this.SELECTED_COLOR;
+                break;
+            case Type.Native:
+                this.Special.color = cc.Color.WHITE;
+                this.Native.color = this.SELECTED_COLOR;
+                this.Normal.color = cc.Color.WHITE;
+                break;
+
+            default:
+                break;
         }
+
     }
 
     get ScrollView() {
@@ -143,10 +179,30 @@ export default class GameListView extends BaseView {
         return this.type == Type.Special;
     }
 
+    get Native() {
+        return this.Selection.getChildByName("Native").getChildByName("Label")
+    }
+
+    get NativeNode() {
+        return this.Selection.getChildByName("Native")
+    }
+
 
     iconCache: {} = {}
     reFreshItems() {
-        let games = this.isSpecial ? GameConfig.inst.Config.specialGames : GameConfig.inst.Config.normalGames;
+        let games = [];
+
+        switch (this.type) {
+            case Type.Native:
+                games = GameConfig.inst.Config.nativeGames;
+                break;
+            case Type.Normal:
+                games = GameConfig.inst.Config.normalGames;
+                break;
+            case Type.Special:
+                games = GameConfig.inst.Config.specialGames;
+                break;
+        }
 
         let newGames = GameConfig.inst.Config.new;
 
@@ -192,7 +248,11 @@ export default class GameListView extends BaseView {
                 }
 
                 node.on(cc.Node.EventType.TOUCH_END, () => {
-                    LoadGameSignal.inst.dispatchTwo(node.name, self.isSpecial);
+                    if (self.type == Type.Native) {
+                        LoadNativeGameSignal.inst.dispatchOne(node.name);
+                    } else {
+                        LoadGameSignal.inst.dispatchTwo(node.name, self.isSpecial);
+                    }
 
                 }, self);
             })))

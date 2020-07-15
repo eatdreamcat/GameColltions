@@ -46,7 +46,7 @@ export default class GameLoadPageView extends BaseView {
         this.Bar.x = this.StartX;
         this.ReadyButton.scale = 0;
         GameSelector.inst.addStartListener(this.Show, this);
-        GameSelector.inst.addFailListener((name: string, special: boolean) => {
+        GameSelector.inst.addFailListener((name: string) => {
             this.Hide();
         }, this);
         GameSelector.inst.addCompleteListener(this.onGameLoadComplete, this);

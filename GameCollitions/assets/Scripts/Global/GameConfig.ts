@@ -8,7 +8,8 @@ interface ConfigJson {
     specialPath: string;
     Url: string;
     normalGames: string[];
-    specialGames: string[]
+    specialGames: string[];
+    nativeGames: string[];
     new: string[]
 }
 export class GameConfig extends SingleTon<GameConfig>() {
