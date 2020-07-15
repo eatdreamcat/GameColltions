@@ -10,6 +10,7 @@
 
 import BaseView from "../../View/BaseView";
 import { GamePageMediator } from "./GamePageMediator";
+import JavaCaller from "../../Utils/JavaCaller";
 
 
 
@@ -42,12 +43,14 @@ export default class GamePageView extends BaseView {
         this.node.scale = 1;
         this.node.active = true;
         this.Block.active = true;
+        JavaCaller.setInWebView(true);
 
     }
 
     Hide() {
         super.Hide();
         this.Block.active = false;
+        JavaCaller.setInWebView(false);
 
     }
 }

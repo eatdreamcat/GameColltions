@@ -12,6 +12,7 @@ import BaseView from "../../View/BaseView";
 import UpdateController from "../../Update/UpdateController";
 import GameSelector from "../Controller/GameSelector";
 import { LoadGameSignal } from "../Command/LoadGameSignal";
+import JavaCaller from "../../Utils/JavaCaller";
 
 const { ccclass, property } = cc._decorator;
 
@@ -38,6 +39,10 @@ export default class GameLoadPageView extends BaseView {
     get ReadyButton() {
         return this.node.getChildByName("ReadyButton")
     }
+
+    get ExitButton() {
+        return this.node.getChildByName("ExitButton")
+    }
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
@@ -45,9 +50,16 @@ export default class GameLoadPageView extends BaseView {
 
         this.Bar.x = this.StartX;
         this.ReadyButton.scale = 0;
+
+        this.ExitButton.on(cc.Node.EventType.TOUCH_END, () => {
+            this.Hide();
+        }, this);
         GameSelector.inst.addStartListener(this.Show, this);
         GameSelector.inst.addFailListener((name: string) => {
-            this.Hide();
+            this.Msg.string = "加载失败，退下吧🙃";
+            this.enabled = false;
+            this.ExitButton.runAction(cc.repeat(cc.sequence(cc.moveBy(0.025, -5, 0), cc.moveBy(0.05, 10, 0), cc.moveBy(0.025, -5, 0)), 6));
+
         }, this);
         GameSelector.inst.addCompleteListener(this.onGameLoadComplete, this);
 
@@ -56,6 +68,7 @@ export default class GameLoadPageView extends BaseView {
 
 
     Show() {
+        this.enabled = true;
         console.log(" show loading page ...");
         super.Show();
         this.ReadyButton.scale = 0;
@@ -64,6 +77,8 @@ export default class GameLoadPageView extends BaseView {
 
         this.Msg.string = "游戏加载完成🤑🤑🤑🤑🤑🤑";
         this.scaleProgress = 1;
+
+
 
     }
 
@@ -93,6 +108,7 @@ export default class GameLoadPageView extends BaseView {
                     this.ReadyButton.once(cc.Node.EventType.TOUCH_END, () => {
 
                         this.ReadyButton.runAction(cc.sequence(cc.scaleTo(0.1, 0), cc.callFunc(() => {
+                            JavaCaller.setInNativeGame(true);
                             setTimeout(() => {
                                 UpdateController.inst.restart();
                             }, 100);

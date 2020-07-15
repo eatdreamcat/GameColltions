@@ -24,6 +24,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
     private init() {
         if (window["jsb"]) {
+            cc.sys.localStorage.removeItem(this.GameKey);
             if (!cc.sys.localStorage.getItem(this.HomeKey)) {
                 console.log("app没有更新过，初始化一下home-page");
                 cc.sys.localStorage.setItem(this.HomeKey, JSON.stringify(["@assets/"]));
@@ -113,7 +114,8 @@ export default class UpdateController extends SingleTon<UpdateController>() {
     }
 
     private onError(msg: string, canRetry: boolean = false) {
-        console.log(" this.errorCallback:", this.errorCallback.length, "error:", msg)
+        console.log(" this.errorCallback:", this.errorCallback.length, "error:", msg);
+        this.isUpdating = false;
         for (let method of this.errorCallback) {
             method.callback.apply(method.target, [msg, canRetry]);
         }

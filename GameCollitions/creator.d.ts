@@ -24829,6 +24829,15 @@ declare namespace dragonBones {
 }
 
 declare namespace jsb {
+
+	export class reflection {
+		/**
+		 * @string packageName: java静态类包名
+		 * @string method： 静态方法名
+		 * @string argsAuth： 参数签名: int - I, float - F, boolean - Z, string - Ljava/lang/String
+		 */
+		static callStaticMethod: (packageName: string, method: string, argsAuth: string, arg0?, arg1?, arg2?, ..._) => void;
+	}
 	export class AssetsManager {
 
 		public readonly static State = {

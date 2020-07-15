@@ -2,6 +2,7 @@ import { CelerSDK } from "../Utils/Celer/CelerSDK";
 import { InitialFacade } from "../Initialization/Facade/InitialFacade";
 import UpdateController from "../Update/UpdateController";
 import GameSelector from "../GamePlay/Controller/GameSelector";
+import JavaCaller from "../Utils/JavaCaller";
 
 const { ccclass, property } = cc._decorator;
 
@@ -15,7 +16,7 @@ export default class App extends cc.Component {
 
     onLoad() {
         console.log(" App onLoad ");
-
+        JavaCaller.setInNativeGame(false);
         GameSelector.inst.init();
 
         this.VersionInfo.string = UpdateController.inst.getVersion();
