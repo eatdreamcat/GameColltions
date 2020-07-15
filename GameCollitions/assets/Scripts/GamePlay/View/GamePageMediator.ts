@@ -144,7 +144,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
         let webView = this.webViewNode.addComponent(cc.WebView);
         if (window["jsb"]) {
-            webView.evaluateJS("window.addEventListener('error', (err)=>{console.log('error occur: ' + JSON.stringify(err))});");
+            webView.evaluateJS("console.log('add error listener--');window.addEventListener('error', (err)=>{console.log('error occur: ' + JSON.stringify(err))});");
         }
         webView.url = GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
         console.log(webView.url);
