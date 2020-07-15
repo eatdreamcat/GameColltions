@@ -142,9 +142,13 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         this.webViewNode.height = this.WebView.height;
         this.WebView.addChild(this.webViewNode);
 
-        let webView = this.webViewNode.addComponent(cc.WebView)
+        let webView = this.webViewNode.addComponent(cc.WebView);
+        if (window["jsb"]) {
+            webView.evaluateJS("window.addEventListener('error', (err)=>{console.log('error occur: ' + JSON.stringify(err))});");
+        }
         webView.url = GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
         console.log(webView.url);
+
         this.View.Show();
         this.CloseButton.active = true;
         this.RefreshButton.active = true;
