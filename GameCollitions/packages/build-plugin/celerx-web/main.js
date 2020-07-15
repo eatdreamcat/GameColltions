@@ -1,5 +1,6 @@
 let initCelerX = function () {
     console.log("-- init celerx --");
+    $ENABLE_CELER_X_SDK$
     $CELER_X_SDK_INIT_CONTENT$
     console.assert(celerSDK !== null, "celerSDK is null !!!");
 }
@@ -97,12 +98,12 @@ window.boot = function () {
                 } else if (settings.orientation === 'portrait') {
                     cc.view.setOrientation(cc.macro.ORIENTATION_PORTRAIT);
                 }
-                cc.view.enableAutoFullScreen([
-                    cc.sys.BROWSER_TYPE_BAIDU,
-                    cc.sys.BROWSER_TYPE_WECHAT,
-                    cc.sys.BROWSER_TYPE_MOBILE_QQ,
-                    cc.sys.BROWSER_TYPE_MIUI,
-                ].indexOf(cc.sys.browserType) < 0);
+                // cc.view.enableAutoFullScreen([
+                //     cc.sys.BROWSER_TYPE_BAIDU,
+                //     cc.sys.BROWSER_TYPE_WECHAT,
+                //     cc.sys.BROWSER_TYPE_MOBILE_QQ,
+                //     cc.sys.BROWSER_TYPE_MIUI,
+                // ].indexOf(cc.sys.browserType) < 0);
             }
 
             // Limit downloading max concurrent task to 2,
@@ -139,7 +140,7 @@ window.boot = function () {
     if (false) {
         BK.Script.loadlib();
     } else {
-        var bundledScript = settings.debug ? 'src/project.dev.js' : 'src/PROJECT_JS_PATH';
+        var bundledScript = settings.debug ? 'src/PROJECT_JS_DEBUG_PATH' : 'src/PROJECT_JS_PATH';
         if (jsList) {
             jsList = jsList.map(function (x) {
                 return 'src/' + x;

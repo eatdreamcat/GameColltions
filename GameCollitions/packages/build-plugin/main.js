@@ -20,6 +20,7 @@ module.exports = {
 
             let mainjsName = "main.js";
             let projectjsName = "project.js";
+            let projectDebugjsName = "project.dev.js";
             let md5Key = "";
             let projectmd5Key = "";
             if (target.md5Cache) {
@@ -42,9 +43,10 @@ module.exports = {
                 let fileList2 = Fs.readdirSync(target.dest + "/src");
                 Editor.success("fileList2 " + fileList2);
                 for (let fileName of fileList2) {
-                    if (/project.[0-9a-zA-Z]{0,}.js/.test(fileName)) {
-                        projectmd5Key = fileName.split(".")[1];
+                    if (/project.[0-9a-zA-Z.]{0,}.js/.test(fileName)) {
+                        projectmd5Key = target.debug ? fileName.split(".")[2] : fileName.split(".")[1];
                         projectjsName = fileName;
+                        projectDebugjsName = fileName;
                     }
                 }
 
@@ -70,7 +72,12 @@ module.exports = {
 
                     let celerx = Fs.readFileSync(Editor.url("packages://build-plugin/" + refPath + "celerx.js")).toString();
 
-                    Fs.writeFileSync(url, mainjsStr.replace("PROJECT_JS_PATH", projectjsName).replace("$CELER_X_SDK_INIT_CONTENT$", celerx));
+                    if (target.debug) {
+                        Fs.writeFileSync(url, mainjsStr.replace("PROJECT_JS_DEBUG_PATH", projectDebugjsName).replace("$CELER_X_SDK_INIT_CONTENT$", celerx).replace("$ENABLE_CELER_X_SDK$", "window.CELER_X = false;"));
+                    } else {
+
+                        Fs.writeFileSync(url, mainjsStr.replace("PROJECT_JS_PATH", projectjsName).replace("$CELER_X_SDK_INIT_CONTENT$", celerx).replace("$ENABLE_CELER_X_SDK$", "window.CELER_X = true;"));
+                    }
                     Editor.success("inject celerx done...");
                 } catch (error) {
                     Editor.success("faild " + error);
