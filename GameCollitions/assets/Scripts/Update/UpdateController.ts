@@ -452,7 +452,7 @@ export default class UpdateController extends SingleTon<UpdateController>() {
 
     restart() {
         console.log("restart");
-        this.applyPaths();
+        UpdateController.inst.applyPaths();
         if (cc.audioEngine) cc.audioEngine.stopAll();
         cc.game.restart();
     }

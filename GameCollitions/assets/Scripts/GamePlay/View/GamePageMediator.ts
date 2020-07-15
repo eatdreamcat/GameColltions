@@ -121,7 +121,9 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     startLoadGame(name: string, special: boolean) {
 
 
-        console.error(cc.view.getFrameSize());
+
+        console.log(JSON.stringify(cc.sys.getSafeAreaRect()));
+
         if (cc.sys.WIN32 == cc.sys.platform) return;
 
 
@@ -129,8 +131,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
         let gameUrl = special ? GameConfig.inst.Config.specialPath : GameConfig.inst.Config.normalPath;
         this.WebView.active = true;
-        this.WebView.width = cc.view.getFrameSize().width;
-        this.WebView.height = cc.view.getFrameSize().height;
+        this.WebView.width = cc.sys.getSafeAreaRect().width;
+        this.WebView.height = cc.sys.getSafeAreaRect().height;
 
         if (this.webViewNode != null && this.webViewNode.destroy) {
             this.webViewNode.destroy();

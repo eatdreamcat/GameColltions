@@ -151,7 +151,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
 
     private onDownloadManifestComplete(err: any, text: string) {
         if (err) {
-            console.error(err);
+            console.error(JSON.stringify(err));
             this.Msg = "加载出错了，退下吧";
             this.onLoadNativeFail(this.name, this.special);
         } else {
