@@ -25,7 +25,7 @@ export default class GameSelector extends SingleTon<GameSelector>() {
     private progress: number = 0;
     private msg: string = "";
     public init() {
-        LoadGameSignal.inst.addListenerTwo<string, boolean>(this.onGameSelector, this);
+        // LoadGameSignal.inst.addListenerTwo<string, boolean>(this.onGameSelector, this);
 
     }
 

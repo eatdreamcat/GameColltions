@@ -40,7 +40,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     private startPos = null;
     onRegister() {
 
-
+        LoadGameSignal.inst.addListenerTwo<string, boolean>(this.startLoadGame, this);
         celerSDK.onBackPressed(this.Close.bind(this));
         this.HideDialog();
 
@@ -144,6 +144,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
         let webView = this.webViewNode.addComponent(cc.WebView);
         if (window["jsb"]) {
+            console.log('add error listener--');
             webView.evaluateJS("console.log('add error listener--');window.addEventListener('error', (err)=>{console.log('error occur: ' + JSON.stringify(err))});");
         }
         webView.url = GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
