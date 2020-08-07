@@ -15,14 +15,14 @@ export default class JavaCaller {
 
 
     public static setInWebView(isInWebview: boolean) {
-        if (jsb && jsb.reflection && jsb.reflection.callStaticMethod) {
+        if (window["jsb"] && jsb.reflection && jsb.reflection.callStaticMethod) {
             console.log(" callStaticMethod --- setInWebView:", isInWebview);
             jsb.reflection.callStaticMethod("org/cocos2dx/javascript/WebViewState", "setInWebview", "(Z)V", isInWebview);
         }
     }
 
     public static setInNativeGame(isInNative: boolean) {
-        if (jsb && jsb.reflection && jsb.reflection.callStaticMethod) {
+        if (window["jsb"] && jsb.reflection && jsb.reflection.callStaticMethod) {
             console.log(" callStaticMethod --- setInNativeGame:", isInNative);
             jsb.reflection.callStaticMethod("org/cocos2dx/javascript/WebViewState", "setInNativeGame", "(Z)V", isInNative);
         }
