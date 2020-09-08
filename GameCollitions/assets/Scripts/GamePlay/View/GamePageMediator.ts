@@ -59,7 +59,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         if (this.WebView.active == false) return;
         if (window["jsb"] && this.webViewNode && this.webViewNode.getComponent) {
             let webView = this.webViewNode.getComponent(cc.WebView);
-            webView && webView.evaluateJS("if (cc.audioEngine) cc.audioEngine.stopAll();")
+            webView && webView.evaluateJS("if (cc.audioEngine) cc.audioEngine.stopAll();");
+            webView.url = "";
         }
 
 
