@@ -7,7 +7,11 @@
   ],
   "design-resolution-height": 1920,
   "design-resolution-width": 1080,
-  "excluded-modules": [],
+  "excluded-modules": [
+    "Geom Utils",
+    "3D",
+    "3D Primitive"
+  ],
   "facebook": {
     "appID": "",
     "audience": {
@@ -29,7 +33,7 @@
     "height": 640,
     "width": 960
   },
-  "start-scene": "current",
   "use-customize-simulator": true,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": false,
+  "start-scene": "current"
 }

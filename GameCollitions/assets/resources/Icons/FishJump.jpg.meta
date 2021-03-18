@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "442c09c4-3ced-4501-81eb-bd8ae2dd2b02",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "FishJump": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "70472e50-7a11-4276-b941-83c13e2c7e5a",
       "rawTextureUuid": "442c09c4-3ced-4501-81eb-bd8ae2dd2b02",
       "trimType": "auto",

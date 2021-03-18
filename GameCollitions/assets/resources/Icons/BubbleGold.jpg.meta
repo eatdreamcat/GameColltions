@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "be9a0d95-64a7-421e-a207-e3104350eb3c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "BubbleGold": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "0420e331-78c9-4dac-812e-f843b4cc0295",
       "rawTextureUuid": "be9a0d95-64a7-421e-a207-e3104350eb3c",
       "trimType": "auto",

@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "e75ca383-2c62-4394-b0c9-4189700f2dd2",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "DaubCash": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ccca94d1-ebed-4581-8f16-794de47c950f",
       "rawTextureUuid": "e75ca383-2c62-4394-b0c9-4189700f2dd2",
       "trimType": "auto",

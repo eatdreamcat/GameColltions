@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "0d843533-cf52-4b30-9c79-ec7daec64b8d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "21-Cash": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "00d9a997-4144-4e35-8427-376d25ceb324",
       "rawTextureUuid": "0d843533-cf52-4b30-9c79-ec7daec64b8d",
       "trimType": "auto",

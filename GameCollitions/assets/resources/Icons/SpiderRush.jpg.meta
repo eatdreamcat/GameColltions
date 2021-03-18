@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "a4b21338-33ec-4ff9-9995-e553b6dbcabf",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "SpiderRush": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "161bc162-ae23-4548-9e4f-2fd3e4abf6e0",
       "rawTextureUuid": "a4b21338-33ec-4ff9-9995-e553b6dbcabf",
       "trimType": "auto",

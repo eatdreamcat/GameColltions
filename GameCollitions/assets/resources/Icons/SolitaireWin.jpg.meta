@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "e02744ec-9678-4fb8-83d4-f1b6ffd90c11",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "SolitaireWin": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "aa521c19-b4b8-4def-bf7c-d7cc11107441",
       "rawTextureUuid": "e02744ec-9678-4fb8-83d4-f1b6ffd90c11",
       "trimType": "auto",

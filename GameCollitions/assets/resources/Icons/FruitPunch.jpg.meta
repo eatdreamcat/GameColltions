@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "9ebca94d-e288-475e-a0e4-a45cd597e980",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "FruitPunch": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6fd7ea88-00b8-41a1-9162-aea82096fa1d",
       "rawTextureUuid": "9ebca94d-e288-475e-a0e4-a45cd597e980",
       "trimType": "auto",

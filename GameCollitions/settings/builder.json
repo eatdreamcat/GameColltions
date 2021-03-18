@@ -2,6 +2,7 @@
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
     "host": "",
+    "packageName": "chichi.game.MoneyMachine",
     "pathPattern": "",
     "recordPath": "",
     "scheme": "https",
@@ -45,5 +46,15 @@
     "subContext": ""
   },
   "xxteaKey": "6d5d24cd-0cdf-4d",
-  "zipCompressJs": true
+  "zipCompressJs": true,
+  "android": {
+    "packageName": "chichi.game.MoneyMachine"
+  },
+  "ios": {
+    "packageName": "chichi.game.MoneyMachine"
+  },
+  "mac": {
+    "packageName": "chichi.game.MoneyMachine"
+  },
+  "win32": {}
 }

@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "e547d834-20f6-40a4-97c6-4e095607393a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "practiceBanner@3x": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "55b26cf6-20f6-41c3-9198-58390cb6db06",
       "rawTextureUuid": "e547d834-20f6-40a4-97c6-4e095607393a",
       "trimType": "auto",
