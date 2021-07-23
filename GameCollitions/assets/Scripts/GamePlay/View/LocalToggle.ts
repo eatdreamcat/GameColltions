@@ -22,6 +22,7 @@ export default class LocalToggle extends cc.Component {
   }
 
   onLoad() {
+    console.log(" LocalToggle ---------------");
     InitLocalConfigSignal.inst.addListener(() => {
       console.log(" update toggle:", GameConfig.inst.LocalConfig);
       if (GameConfig.inst.LocalConfig) {
