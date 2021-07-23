@@ -22,7 +22,6 @@ export default class LocalToggle extends cc.Component {
   }
 
   onLoad() {
-    this.node.active = false;
     InitLocalConfigSignal.inst.addListener(() => {
       if (GameConfig.inst.LocalConfig) {
         this.node.active = true;
@@ -39,5 +38,7 @@ export default class LocalToggle extends cc.Component {
       },
       this
     );
+
+    this.node.active = false;
   }
 }

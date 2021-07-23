@@ -239,7 +239,7 @@ export default class GameListView extends BaseView {
           ? cc.loader.loadRes.bind(cc.loader)
           : cc.loader.load.bind(cc.loader);
       loadFunc(
-        GameConfig.inst.IconUrl + games[index] + ".jpg?time=" + Date.now(),
+        GameConfig.inst.IconUrl + games[index].icon + ".jpg?time=" + Date.now(),
         (err, sp) => {
           if (err) {
             console.error(err);
