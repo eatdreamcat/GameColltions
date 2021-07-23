@@ -122,9 +122,9 @@ export class GameConfig extends SingleTon<GameConfig>() {
             console.error(JSON.stringify(err));
             this.local = false;
           } else {
-            console.log(res);
             this.localConfig = res;
             this.local = true;
+            console.log(this.localConfig);
             InitLocalConfigSignal.inst.dispatch();
           }
           callback();
