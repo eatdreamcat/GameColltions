@@ -24,6 +24,7 @@ declare class celerSDK {
   /** onStart触发后获取随机种子等信息 */
   static getMatch(): MatchInfo;
 
+  static onBackPressed(callback: () => {}): void;
   /**
    * 结算提交分数，调用该接口后则游戏结束，webview关闭
    * @param score
