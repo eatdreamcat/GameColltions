@@ -102,6 +102,20 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
     webView.url =
       GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
     console.log(webView.url);
+    webView.node.on(
+      "loaded",
+      () => {
+        console.log("web view loading.");
+        webView.evaluateJS(
+          `
+          if (cc && cc.StartGame){
+            cc.StartGame();
+          }
+          `
+        );
+      },
+      this
+    );
 
     this.View.Show();
     this.CloseButton.active = true;
