@@ -195,7 +195,7 @@
       "array": [
         0,
         0,
-        702.6033733850113,
+        692.820323027551,
         0,
         0,
         0,
@@ -3637,7 +3637,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 171.24,
+      "width": 135.59,
       "height": 88.2
     },
     "_anchorPoint": {
@@ -3688,8 +3688,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "11111",
-    "_N$string": "11111",
+    "_string": "gsgd",
+    "_N$string": "gsgd",
     "_fontSize": 60,
     "_lineHeight": 70,
     "_enableWrapText": true,
