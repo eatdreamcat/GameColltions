@@ -16,10 +16,11 @@ import {
   LoadNativeGameSignal,
 } from "../Command/LoadGameSignal";
 import { networkInterfaces } from "os";
+import { UpdateToggleSignal } from "./LocalToggle";
 
 const { ccclass, property } = cc._decorator;
 
-enum Type {
+export enum Type {
   Normal,
   Special,
   Native,
@@ -33,6 +34,8 @@ export default class GameListView extends BaseView {
     super.onLoad();
 
     this.type = Type.Normal;
+
+    UpdateToggleSignal.inst.addListener(this.updateToggle, this);
 
     // 默认选中特殊
 
@@ -122,6 +125,20 @@ export default class GameListView extends BaseView {
     this.BindMedaitor(GameListMediator);
   }
 
+  updateToggle() {
+    if (GameConfig.inst.isLocal) {
+      this.type = Type.Normal;
+      this.updateType();
+      this.reFreshItems();
+
+      this.Special.getComponent(cc.Label).string = "Release\nLog";
+      this.Native.getComponent(cc.Label).string = "Dashboard";
+    } else {
+      this.Special.getComponent(cc.Label).string = "Special\nH5";
+      this.Native.getComponent(cc.Label).string = "Native";
+    }
+  }
+
   updateType() {
     switch (this.type) {
       case Type.Special:
@@ -198,19 +215,7 @@ export default class GameListView extends BaseView {
 
   iconCache: {} = {};
   reFreshItems() {
-    let games = [];
-
-    switch (this.type) {
-      case Type.Native:
-        games = GameConfig.inst.Config.nativeGames;
-        break;
-      case Type.Normal:
-        games = GameConfig.inst.Config.normalGames;
-        break;
-      case Type.Special:
-        games = GameConfig.inst.Config.specialGames;
-        break;
-    }
+    let games = GameConfig.inst.getGameList(this.type);
 
     let newGames = GameConfig.inst.Config.new;
 
@@ -224,8 +229,8 @@ export default class GameListView extends BaseView {
     function refreshIcon(node: cc.Node, index: number) {
       index = index % games.length;
 
-      if (self.iconCache[games[index]]) {
-        initIcon(node, self.iconCache[games[index]], index);
+      if (self.iconCache[games[index].icon]) {
+        initIcon(node, self.iconCache[games[index].icon], index);
         return;
       }
 
@@ -234,12 +239,12 @@ export default class GameListView extends BaseView {
           ? cc.loader.loadRes.bind(cc.loader)
           : cc.loader.load.bind(cc.loader);
       loadFunc(
-        GameConfig.Url + "Icons/" + games[index] + ".jpg?time=" + Date.now(),
+        GameConfig.inst.IconUrl + games[index] + ".jpg?time=" + Date.now(),
         (err, sp) => {
           if (err) {
             console.error(err);
           } else {
-            self.iconCache[games[index]] = sp;
+            self.iconCache[games[index].icon] = sp;
             initIcon(node, sp, index);
           }
         }
@@ -248,7 +253,7 @@ export default class GameListView extends BaseView {
 
     function initIcon(node: cc.Node, sp: cc.Texture2D, index: number) {
       self.getIconSprite(node).spriteFrame = new cc.SpriteFrame(sp);
-      node.name = games[index];
+      node.name = games[index].name;
 
       node.targetOff(self);
 

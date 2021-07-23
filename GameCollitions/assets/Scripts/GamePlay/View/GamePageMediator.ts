@@ -77,9 +77,8 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
 
     console.log(" load game in webview:", name, ", special:", special);
 
-    let gameUrl = special
-      ? GameConfig.inst.Config.specialPath
-      : GameConfig.inst.Config.normalPath;
+    GameConfig.inst.isSpecial = special;
+
     this.WebView.active = true;
     this.WebView.width = cc.sys.getSafeAreaRect().width;
     this.WebView.height = cc.sys.getSafeAreaRect().height;
@@ -99,8 +98,7 @@ export class GamePageMediator extends BaseMediator<GamePageView> {
         "console.log('add error listener--');window.addEventListener('error', (err)=>{console.log('error occur: ' + JSON.stringify(err))});"
       );
     }
-    webView.url =
-      GameConfig.inst.Config.Url + gameUrl + name + "?time=" + Date.now();
+    webView.url = GameConfig.inst.getGameUrl(name) + "?time=" + Date.now();
     console.log(webView.url);
     webView.node.on(
       "loaded",

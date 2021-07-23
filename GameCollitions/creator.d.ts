@@ -9252,6 +9252,20 @@ declare namespace cc {
 		It's used to parse downloaded content with several handlers: JSON, image, plist, fnt, uuid.
 		You can add your own download function with addLoadHandlers */
     static loader: any;
+    /** xml http get 请求 */
+    static XMLHttpGet(
+      url: string,
+      completeCallback: (
+        errMsg: { status: number; errorMessage: string },
+        res: string
+      ) => void,
+      progressCallback?: (
+        progress: number,
+        loaded: number,
+        total: number
+      ) => void
+    ): void;
+
     /**
 		Gets a new XMLHttpRequest instance. 
 		*/
