@@ -2,7 +2,6 @@
 
 /** Running with celerx SDK*/
 declare let CELER_X: boolean;
-declare let MENU_SCENE: boolean;
 
 /** 匹配信息 */
 declare interface MatchInfo {
