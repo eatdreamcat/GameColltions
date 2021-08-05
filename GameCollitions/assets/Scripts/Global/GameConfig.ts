@@ -55,6 +55,7 @@ export class GameConfig extends SingleTon<GameConfig>() {
 
   getGameList(type: Type): { name: string; url: string; icon: string }[] {
     let games: { name: string; url: string; icon: string }[] = [];
+    console.log("get Game List:", Type[type]);
     switch (type) {
       case Type.Native:
         for (let game of GameConfig.inst.Config.nativeGames) {
@@ -66,7 +67,7 @@ export class GameConfig extends SingleTon<GameConfig>() {
         }
         break;
       case Type.Normal:
-        if (this.isLocal) {
+        if (this.isLocal == false) {
           for (let game of GameConfig.inst.Config.normalGames) {
             games.push({
               name: game,

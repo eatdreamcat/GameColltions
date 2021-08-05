@@ -216,7 +216,7 @@ export default class GameListView extends BaseView {
   iconCache: {} = {};
   reFreshItems() {
     let games = GameConfig.inst.getGameList(this.type);
-
+    console.log(games);
     let newGames = GameConfig.inst.Config.new;
 
     let itemCount = games.length;
